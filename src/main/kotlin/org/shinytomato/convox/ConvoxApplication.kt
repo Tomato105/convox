@@ -1,28 +1,44 @@
 package org.shinytomato.convox
 
 import javafx.application.Application
-import javafx.fxml.FXMLLoader
-import javafx.scene.Scene
-import javafx.scene.image.Image
 import javafx.stage.Stage
-import kotlin.math.sqrt
+import org.shinytomato.convox.ConvoxAction.mainPage
+import org.shinytomato.convox.fxml.MainController
+import java.net.URL
 
-class MainApp : Application() {
+class ConvoxApplication : Application() {
+
+    init {
+        instance = this
+    }
+
+    /*internal lateinit var stage: Stage
+    internal var scene: Scene
+        set(value) { stage.scene = value }
+        get() = stage.scene*/
+
     override fun start(stage: Stage) {
-        val fxmlLoader = FXMLLoader(javaClass.getResource("main.fxml"))
-        val scene = Scene(fxmlLoader.load())
+        ConvoxApplication.stage = stage
+//        LanguageListFController.loadFXML(stage)
+        mainPage(stage)
+        stage.show()
+    }
 
-        stage.run {
-            title = "Convox에 오신 걸 환영합니다"
-            setScene(scene)
-            icons.add(Image(javaClass.getResourceAsStream("image/icon.png")))
-            width = 400.0 * sqrt(1.4141356)
-            height = 400.0
-            show()
-        }
+    companion object {
+        lateinit var instance: ConvoxApplication
+        lateinit var stage: Stage
+        fun String.getResource(): URL = (instance.javaClass.getResource(this) ?: null.also { println("shinyerror: cannnot find: $this") })!!
+    }
+}
+
+object ConvoxAction {
+    fun mainPage(stage: Stage) { MainController.loadFXML(stage) }
+    fun languageStructure(stage: Stage, selected: String) {
+        stage.hide()
+        TODO()
     }
 }
 
 fun main() {
-    Application.launch(MainApp::class.java)
+    Application.launch(ConvoxApplication::class.java)
 }

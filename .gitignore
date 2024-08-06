@@ -40,6 +40,10 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Shiny Settings ###
 /.idea/
 /gradle/wrapper/gradle-wrapper.properties
 /gradle/wrapper/gradle-wrapper.jar
+/data/
+/src/test/

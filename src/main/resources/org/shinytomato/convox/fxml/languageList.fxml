@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.shinytomato.convox.fxml.LanguageListController"
+           stylesheets="@css/languageList.css"
+           id="box"
+           maxHeight="-Infinity">
+    <ListView fx:id="languageList" maxHeight="320.0" onMousePressed="#whenSelected" prefWidth="250.0"/>
+</StackPane>

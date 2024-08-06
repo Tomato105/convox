@@ -1,0 +1,27 @@
+#box {
+   -fx-border-color: #d0d0d0;
+   -fx-border-width: 2px;
+   -fx-border-style: solid;
+}
+
+.list-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.list-cell:odd {
+    -fx-background-color: #ffffff;
+}
+
+.list-cell:even {
+    -fx-background-color: #ffffff;
+}
+
+.list-cell:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+.list-cell:selected {
+    -fx-text-fill: #000000;
+    -fx-background-color: #c0e0ff
+}
