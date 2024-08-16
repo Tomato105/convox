@@ -5,8 +5,9 @@ import javafx.scene.Parent
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.Image
+import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
+import javafx.stage.Stage
 import org.shinytomato.convox.i.FXMLController
 import org.shinytomato.convox.i.IGetSelected
 import org.shinytomato.convox.i.Loadable
@@ -24,6 +25,22 @@ class MainController : FXMLController(), IGetSelected {
         languageListViewController.getSelected = this
     }
 
+    override fun whenLoad(stage: Stage) {
+        stage.run {
+            title = "Convox에 오신 것을 환영합니다"
+            icons.add(Image("org/shinytomato/convox/image/icon.png"))
+            width = 500.0
+            height = 400.0
+            isResizable = false
+        }
+
+        stage.scene.addEventFilter(KeyEvent.KEY_PRESSED) {
+            key: KeyEvent ->
+                if (key.code == KeyCode.ENTER)
+                    languageListViewController.openCurrentlySelected()
+        }
+    }
+
     override fun whenSelected(selected: String, clickCount: Int) {
         when (clickCount) {
             1 -> {
@@ -34,21 +51,7 @@ class MainController : FXMLController(), IGetSelected {
         }
     }
 
-    override fun whenLoad() {
-        stage.run {
-            title = "Convox에 오신 것을 환영합니다"
-            icons.add(Image("org/shinytomato/convox/image/icon.png"))
-            width = 500.0
-            height = 400.0
-            isResizable = false
-        }
-
-        scene.addEventFilter(KeyEvent.KEY_PRESSED) {
-            key: KeyEvent -> println(key.code)
-        }
-    }
-
-    fun new() {
+    fun newButton() {
         TODO()
     }
 

@@ -12,8 +12,6 @@ import org.shinytomato.convox.i.Loadable
 
 class LanguageListController: FXMLController() {
 
-    override fun whenLoad() {}
-
     @FXML private lateinit var languageList: ListView<String>
 
     internal var getSelected: IGetSelected? = null
@@ -34,7 +32,7 @@ class LanguageListController: FXMLController() {
 
     fun openCurrentlySelected() {
         val selected = languageList.selectionModel.selectedItem.also(::println) ?: return
-        ConvoxAction.languageStructure(stage, selected)
+        ConvoxAction.languageStructure(selected)
     }
 
     companion object: Loadable("languageList")

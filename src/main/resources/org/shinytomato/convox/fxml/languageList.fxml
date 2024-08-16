@@ -9,5 +9,5 @@
            stylesheets="@css/languageList.css"
            id="box"
            maxHeight="-Infinity">
-    <ListView fx:id="languageList" maxHeight="320.0" onMousePressed="#whenSelected" prefWidth="250.0"/>
+    <ListView fx:id="languageList" onMousePressed="#whenSelected" prefWidth="250.0"/>
 </StackPane>

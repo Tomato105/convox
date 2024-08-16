@@ -1,8 +1,10 @@
 package org.shinytomato.convox
 
 import javafx.application.Application
+import javafx.scene.Scene
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction.mainPage
+import org.shinytomato.convox.ConvoxApplication.ApplicationState.stage
 import org.shinytomato.convox.fxml.MainController
 import java.net.URL
 
@@ -24,18 +26,24 @@ class ConvoxApplication : Application() {
         stage.show()
     }
 
-    companion object {
-        lateinit var instance: ConvoxApplication
-        lateinit var stage: Stage
+    companion object ApplicationState {
+        internal lateinit var instance: ConvoxApplication
+        internal lateinit var stage: Stage
+        var scene: Scene
+            get() = stage.scene
+            set(value) { stage.scene = value }
+
         fun String.getResource(): URL = (instance.javaClass.getResource(this) ?: null.also { println("shinyerror: cannnot find: $this") })!!
     }
 }
 
 object ConvoxAction {
-    fun mainPage(stage: Stage) { MainController.loadFXML(stage) }
-    fun languageStructure(stage: Stage, selected: String) {
+    fun mainPage(stage: Stage) {
+        MainController.loadFXML(stage)
+    }
+    fun languageStructure(selected: String) {
         stage.hide()
-        TODO()
+        println("selected: $selected")
     }
 }
 
