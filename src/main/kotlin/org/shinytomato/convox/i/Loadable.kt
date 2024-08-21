@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxApplication.ApplicationState.getResource
+
 /*
 interface ILoadable {
     val fxml: String
@@ -23,7 +24,10 @@ interface ILoadable {
 }*/
 
 open class Loadable(private val fxml: String) {
-    fun loadFXML(stage: Stage, action: FXMLController.(Stage, Scene) -> Unit = { _: Stage, _: Scene -> }): FXMLController {
+    fun loadFXML(
+        stage: Stage,
+        action: FXMLController.(Stage, Scene) -> Unit = { _: Stage, _: Scene -> },
+    ): FXMLController {
         val loader = FXMLLoader("fxml/$fxml.fxml".getResource())
         val scene = Scene(loader.load())
 

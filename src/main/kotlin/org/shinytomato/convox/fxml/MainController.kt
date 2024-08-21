@@ -37,10 +37,9 @@ class MainController : FXMLController(), IGetSelected {
             isResizable = false
         }
 
-        scene.addEventFilter(KeyEvent.KEY_PRESSED) {
-            key: KeyEvent ->
-                if (key.code == KeyCode.ENTER)
-                    languageListViewController.openCurrentlySelected()
+        scene.addEventFilter(KeyEvent.KEY_PRESSED) { key: KeyEvent ->
+            if (key.code == KeyCode.ENTER)
+                languageListViewController.openCurrentlySelected()
         }
     }
 
@@ -50,6 +49,7 @@ class MainController : FXMLController(), IGetSelected {
                 this.selected.text = selected
                 open.isDisable = false
             }
+
             2 -> languageListViewController.openCurrentlySelected()
         }
     }
@@ -60,5 +60,5 @@ class MainController : FXMLController(), IGetSelected {
 
     fun openButton(): Unit = languageListViewController.openCurrentlySelected()
 
-    companion object: Loadable("main")
+    companion object : Loadable("main")
 }

@@ -20,12 +20,13 @@ import java.util.function.Predicate
 class LanguageListController : FXMLController() {
 
     @FXML
-    lateinit var search: TextField
+    private lateinit var search: TextField
     private var languages = FilteredList(FXCollections.observableList(DataManager.loadLanguageList()))
 
     @FXML
     private lateinit var languageList: ListView<TextFlow>
 
+    // 외부에서 getSelected에 자기를 등록해야 함.
     internal var getSelected: IGetSelected? = null
 
 
@@ -58,7 +59,7 @@ class LanguageListController : FXMLController() {
                     SimpleObjectProperty(
                         FXCollections.observableList(languages.map {
                             val index = it.indexOf(text)
-                            val point = index+text.length
+                            val point = index + text.length
                             TextFlow(
                                 Text(it.substring(0..<index)),
                                 Text(it.substring(index..<point))
@@ -92,8 +93,8 @@ class LanguageListController : FXMLController() {
     }
 
     fun openCurrentlySelected() {
-        val selected = languageList.selectionModel.selectedItem.also(::println) ?: return
-        ConvoxAction.languageStructure(selected.children.joinToString(separator = "")  { (it as Text).text })
+        val selected = languageList.selectionModel.selectedItem ?: return
+        ConvoxAction.languageStructure(selected.children.joinToString(separator = "") { (it as Text).text })
     }
 
     companion object : Loadable("languageList")

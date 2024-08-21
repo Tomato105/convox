@@ -27,7 +27,7 @@ data class LanguageConfig(
     fun loadLanguage(lang: File): Language {
 
         fun String.splitTrimmed(delim: Char) =
-            this.split(delim.also { println("delim: ${it.code}") }).also(::println).run {
+            this.split(delim).run {
                 if (first().isEmpty()) subList(1, this.size)
                 else this
             }
@@ -107,7 +107,7 @@ data class LanguageConfig(
                             target?.add(ln)
                     }
                 }
-            return LanguageConfig(attrNames, wordClasses).also(::println)
+            return LanguageConfig(attrNames, wordClasses)
         }
     }
 }

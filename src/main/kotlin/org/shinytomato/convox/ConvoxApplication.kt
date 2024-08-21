@@ -32,9 +32,12 @@ class ConvoxApplication : Application() {
         internal lateinit var stage: Stage
         var scene: Scene
             get() = stage.scene
-            set(value) { stage.scene = value }
+            set(value) {
+                stage.scene = value
+            }
 
-        fun String.getResource(): URL = (instance.javaClass.getResource(this) ?: null.also { println("shinyerror: cannnot find: $this") })!!
+        fun String.getResource(): URL =
+            (instance.javaClass.getResource(this) ?: null.also { println("shinyerror: cannnot find: $this") })!!
     }
 }
 
@@ -42,6 +45,7 @@ object ConvoxAction {
     fun mainPage(stage: Stage) {
         MainController.loadFXML(stage)
     }
+
     fun languageStructure(selected: String) {
         stage.hide()
         println("selected: $selected")
