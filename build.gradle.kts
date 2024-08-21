@@ -31,7 +31,7 @@ tasks.register<Jar>("fatJar") {
     })
 
     manifest {
-        attributes["Main-Class"] = "org.shinytomato.convox.HelloApplicationKt"
+        attributes["Main-Class"] = "org.shinytomato.convox.ConvoxApplicationKt"
     }
 }
 

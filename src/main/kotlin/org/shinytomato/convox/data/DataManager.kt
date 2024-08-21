@@ -20,18 +20,19 @@ data class LanguageConfig(
             bw.write("attr:\n")
             attrNames.forEach { bw.write("$it\n") }
             bw.write("class:\n")
-            wordClasses.forEach { bw.write("$it\n")}
+            wordClasses.forEach { bw.write("$it\n") }
         }
     }
 
-    fun loadLanguage(dir: File): Language {
+    fun loadLanguage(lang: File): Language {
 
-        fun String.splitTrimmed(delim: Char) = this.also(::println).split(delim.also { println("delim: ${it.code}") }).also(::println).run {
-            if (first().isEmpty().also(::println)) subList(1, this.size)
-            else this
-        }
+        fun String.splitTrimmed(delim: Char) =
+            this.split(delim.also { println("delim: ${it.code}") }).also(::println).run {
+                if (first().isEmpty()) subList(1, this.size)
+                else this
+            }
 
-        val words = dir.resolve("words").reader().buffered().use { br ->
+        val words = lang.resolve("words").reader().buffered().use { br ->
             br.readText()
                 .splitTrimmed('\u0001')
                 .map { word ->
@@ -170,7 +171,7 @@ sealed class Meaning(protected val meaning: String) {
     }
 
     class DescribedMeaning(meaning: String, private val description: String) : Meaning(meaning) {
-        override fun toString(): String  = "DescribedMeaning(meaning=$meaning, description=$description)"
+        override fun toString(): String = "DescribedMeaning(meaning=$meaning, description=$description)"
         override fun write(): String = "\u0006$meaning\u0007$description"
     }
 
@@ -181,7 +182,7 @@ sealed class Meaning(protected val meaning: String) {
                 else -> DescribedMeaning(
                     input.substring(0, index),
                     input.substring(index + 1, input.length)
-                    )
+                )
             }
     }
 }

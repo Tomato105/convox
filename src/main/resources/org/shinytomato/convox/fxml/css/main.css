@@ -1,14 +1,11 @@
 .root {
     -fx-font-size: 13;
     -fx-font-family: "Malgun Gothic";
-}
-
-.button {
-    -fx-focus-color: transparent;
+    -fx-focus-color: #888888;
     -fx-faint-focus-color: transparent;
 }
 
-#msg {
+#selected {
     -fx-font-size: 14;
 }
 

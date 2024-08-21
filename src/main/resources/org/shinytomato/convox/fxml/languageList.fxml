@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.shinytomato.convox.fxml.LanguageListController"
-           stylesheets="@css/languageList.css"
-           id="box"
-           maxHeight="-Infinity">
-    <ListView fx:id="languageList" onMousePressed="#whenSelected" prefWidth="250.0"/>
-</StackPane>
+<VBox stylesheets="@css/languageList.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.shinytomato.convox.fxml.LanguageListController">
+    <TextField fx:id="search" promptText="검색...">
+        <VBox.margin>
+            <Insets bottom="10.0"/>
+        </VBox.margin>
+    </TextField>
+    <BorderPane id="box">
+        <center>
+            <ListView fx:id="languageList" fixedCellSize="38" onMousePressed="#whenSelected" prefWidth="250.0"/>
+        </center>
+    </BorderPane>
+</VBox>

@@ -23,14 +23,14 @@ interface ILoadable {
 }*/
 
 open class Loadable(private val fxml: String) {
-    fun loadFXML(stage: Stage, action: FXMLController.(Stage) -> Unit = {}): FXMLController {
+    fun loadFXML(stage: Stage, action: FXMLController.(Stage, Scene) -> Unit = { _: Stage, _: Scene -> }): FXMLController {
         val loader = FXMLLoader("fxml/$fxml.fxml".getResource())
         val scene = Scene(loader.load())
 
         return loader.getController<FXMLController>().apply {
+            whenLoad(stage, scene)
+            action(stage, scene)
             stage.scene = scene
-            whenLoad(stage)
-            action(stage)
         }
     }
 }

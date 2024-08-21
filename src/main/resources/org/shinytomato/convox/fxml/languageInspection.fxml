@@ -2,8 +2,8 @@
 
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.shinytomato.convox.fxml.LanguageInspectionController"
-            prefHeight="400.0" prefWidth="600.0">
-</AnchorPane>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.shinytomato.convox.fxml.LanguageInspectionController"
+      prefHeight="400.0" prefWidth="600.0">
+</HBox>

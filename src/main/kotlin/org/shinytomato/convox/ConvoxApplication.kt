@@ -21,6 +21,7 @@ class ConvoxApplication : Application() {
 
     override fun start(stage: Stage) {
         ConvoxApplication.stage = stage
+
 //        LanguageListFController.loadFXML(stage)
         mainPage(stage)
         stage.show()
