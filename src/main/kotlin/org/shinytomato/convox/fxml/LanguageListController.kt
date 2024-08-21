@@ -86,14 +86,14 @@ class LanguageListController : FXMLController() {
 
     fun whenSelected(event: MouseEvent) {
         getSelected?.whenSelected(
-            languageList.selectionModel.selectedItem.children.joinToString(separator = ""),
+            languageList.selectionModel.selectedItem.children.joinToString(separator = "") { (it as Text).text },
             event.clickCount
         )
     }
 
     fun openCurrentlySelected() {
         val selected = languageList.selectionModel.selectedItem.also(::println) ?: return
-        ConvoxAction.languageStructure(selected.children.joinToString(separator = ""))
+        ConvoxAction.languageStructure(selected.children.joinToString(separator = "")  { (it as Text).text })
     }
 
     companion object : Loadable("languageList")
