@@ -27,7 +27,7 @@ class LanguageListController : FXMLController() {
     private lateinit var languageList: ListView<TextFlow>
 
     // 외부에서 getSelected에 자기를 등록해야 함.
-    internal var getSelected: IGetSelected? = null
+    internal var getSelected: IGetSelected<TextFlow>? = null
 
 
     @FXML
@@ -45,33 +45,6 @@ class LanguageListController : FXMLController() {
             }
         }*/
 
-        fun updateList(text: String) {
-            if (text.isEmpty()) {
-                languages.predicate = Predicate { true }
-                languageList.itemsProperty().bind(
-                    SimpleObjectProperty(
-                        FXCollections.observableList(languages.map { TextFlow(Text(it)) })
-                    )
-                )
-            } else {
-                languages.predicate = Predicate { it.contains(text) }
-                languageList.itemsProperty().bind(
-                    SimpleObjectProperty(
-                        FXCollections.observableList(languages.map {
-                            val index = it.indexOf(text)
-                            val point = index + text.length
-                            TextFlow(
-                                Text(it.substring(0..<index)),
-                                Text(it.substring(index..<point))
-                                    .apply { style = "-fx-font-weight: bold" },
-                                Text(it.substring(point..<it.length)),
-                            )
-                        })
-                    )
-                )
-            }
-        }
-
         languageList.run {
 //            languageList.itemsProperty().bind(SimpleObjectProperty(FXCollections.observableList(languages.map { TextFlow(Text(it)) })))
             updateList("")
@@ -85,10 +58,37 @@ class LanguageListController : FXMLController() {
         }
     }
 
+    private fun updateList(text: String) {
+        if (text.isEmpty()) {
+            languages.predicate = Predicate { true }
+            languageList.itemsProperty().bind(
+                SimpleObjectProperty(
+                    FXCollections.observableList(languages.map { TextFlow(Text(it)) })
+                )
+            )
+        } else {
+            languages.predicate = Predicate { it.contains(text) }
+            languageList.itemsProperty().bind(
+                SimpleObjectProperty(
+                    FXCollections.observableList(languages.map {
+                        val index = it.indexOf(text)
+                        val point = index + text.length
+                        TextFlow(
+                            Text(it.substring(0..<index)),
+                            Text(it.substring(index..<point))
+                                .apply { style = "-fx-font-weight: bold" },
+                            Text(it.substring(point..<it.length)),
+                        )
+                    })
+                )
+            )
+        }
+    }
+
     fun whenSelected(event: MouseEvent) {
         getSelected?.whenSelected(
-            languageList.selectionModel.selectedItem.children.joinToString(separator = "") { (it as Text).text },
-            event.clickCount
+            languageList.selectionModel.selectedItem,
+            event
         )
     }
 

@@ -1,5 +1,7 @@
 package org.shinytomato.convox.i
 
-interface IGetSelected {
-    fun whenSelected(selected: String, clickCount: Int)
+import javafx.scene.input.MouseEvent
+
+interface IGetSelected<T> {
+    fun whenSelected(selected: T, clickEvent: MouseEvent)
 }

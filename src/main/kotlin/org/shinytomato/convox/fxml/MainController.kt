@@ -8,6 +8,9 @@ import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
+import javafx.scene.text.Text
+import javafx.scene.text.TextFlow
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction
 import org.shinytomato.convox.ConvoxApplication.ApplicationState.stage
@@ -15,7 +18,7 @@ import org.shinytomato.convox.i.FXMLController
 import org.shinytomato.convox.i.IGetSelected
 import org.shinytomato.convox.i.Loadable
 
-class MainController : FXMLController(), IGetSelected {
+class MainController : FXMLController(), IGetSelected<TextFlow> {
 
     @FXML lateinit var selected: Label
     @FXML lateinit var new: Button
@@ -43,10 +46,10 @@ class MainController : FXMLController(), IGetSelected {
         }
     }
 
-    override fun whenSelected(selected: String, clickCount: Int) {
-        when (clickCount) {
+    override fun whenSelected(selected: TextFlow, clickEvent: MouseEvent) {
+        when (clickEvent.clickCount) {
             1 -> {
-                this.selected.text = selected
+                this.selected.text = selected.children.joinToString(separator = "") { (it as Text).text }
                 open.isDisable = false
             }
 
