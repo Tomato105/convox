@@ -63,5 +63,5 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
 
     fun openButton(): Unit = languageListViewController.openCurrentlySelected()
 
-    companion object : Loadable("main")
+    companion object : Loadable("main/main")
 }
