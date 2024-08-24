@@ -24,9 +24,7 @@ open class SearchableListController(val input: FilteredList<String>) : FXMLContr
 
     constructor(input: List<String>) : this(FilteredList(FXCollections.observableList(input)))
 
-    protected open fun action() {
-
-    }
+    protected open fun action() {}
 
     fun whenSelected(event: MouseEvent) {
         getSelected?.whenSelected(

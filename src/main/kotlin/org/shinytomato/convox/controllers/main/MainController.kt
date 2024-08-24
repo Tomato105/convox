@@ -33,13 +33,13 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
     @FXML
     private fun initialize() {
         selected.textProperty().bind(Bindings.`when`(selectedItem.isEmpty)
-            .then("언어를 선택해 주십시오")
+            .then("언어를 선택하여 주십시오")
             .otherwise(selectedItem))
 
         languageListViewController.getSelected = this
     }
 
-    fun openSelected() {
+    private fun openSelected() {
         ConvoxAction.languageStructure(if (selectedItem.isEmpty.get()) return else selectedItem.get())
     }
 

@@ -14,6 +14,11 @@ class SearchableListView(
     searchedBy: TextField,
 ) {
     init {
+        /*filteredList.predicateProperty().bind(Bindings.`when`(searchedBy.textProperty().isEmpty)
+            .then(Predicate<String>{true})
+            .otherwise(Predicate<String>{it.contains(searchedBy.textProperty().get())})
+        )*/
+
         updateList("")
         searchedBy.textProperty().addListener { _, _, text ->
             updateList(text)
@@ -24,10 +29,10 @@ class SearchableListView(
         listview.items.setAll(
             if (text.isEmpty()) {
                 filteredList.predicate = Predicate { true }
-                FXCollections.observableList(filteredList.map { TextFlow(Text(it)) })
+                filteredList.map { TextFlow(Text(it)) }
             } else {
                 filteredList.predicate = Predicate { it.contains(text) }
-                FXCollections.observableList(filteredList.map {
+                filteredList.map {
                     val index = it.indexOf(text)
                     val point = index + text.length
                     TextFlow(
@@ -36,7 +41,7 @@ class SearchableListView(
                             .apply { style = "-fx-font-weight: bold" },
                         Text(it.substring(point..<it.length)),
                     )
-                })
+                }
             }
         )
     }
