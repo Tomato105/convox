@@ -5,7 +5,7 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction.mainPage
 import org.shinytomato.convox.ConvoxApplication.ApplicationState.stage
-import org.shinytomato.convox.fxml.MainController
+import org.shinytomato.convox.controllers.main.MainController
 import java.net.URL
 
 class ConvoxApplication : Application() {

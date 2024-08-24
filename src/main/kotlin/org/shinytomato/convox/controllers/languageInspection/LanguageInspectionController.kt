@@ -1,4 +1,4 @@
-package org.shinytomato.convox.fxml
+package org.shinytomato.convox.controllers.languageInspection
 
 import org.shinytomato.convox.i.FXMLController
 import org.shinytomato.convox.i.Loadable

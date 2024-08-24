@@ -6,7 +6,7 @@
 
 <HBox alignment="TOP_CENTER" prefHeight="364.0" prefWidth="500.0" stylesheets="@../css/main.css"
       xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.shinytomato.convox.fxml.MainController">
+      fx:controller="org.shinytomato.convox.controllers.main.MainController">
     <VBox prefHeight="200.0" prefWidth="220.0">
         <HBox.margin>
             <Insets top="10.0"/>

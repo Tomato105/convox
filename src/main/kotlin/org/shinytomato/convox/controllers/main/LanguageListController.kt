@@ -1,4 +1,4 @@
-package org.shinytomato.convox.fxml
+package org.shinytomato.convox.controllers.main
 
 import javafx.beans.binding.Bindings
 import javafx.scene.text.Text
