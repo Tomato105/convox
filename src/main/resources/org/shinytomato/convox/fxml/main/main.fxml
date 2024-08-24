@@ -14,7 +14,7 @@
         <fx:include fx:id="languageListView" maxHeight="330.0" prefWidth="220.0" source="languageList.fxml"/>
     </VBox>
     <VBox alignment="BASELINE_CENTER" maxHeight="340.0" prefWidth="200.0">
-        <Label id="selected" fx:id="selected" text="언어를 선택해 주십시오">
+        <Label id="selected" fx:id="selected">
             <VBox.margin>
                 <Insets bottom="20.0" top="20.0"/>
             </VBox.margin>

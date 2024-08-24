@@ -1,5 +1,7 @@
 package org.shinytomato.convox.controllers.main
 
+import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -26,9 +28,19 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
     @FXML lateinit var languageListView: Parent
     @FXML lateinit var languageListViewController: LanguageListController
 
+    var selectedItem: SimpleStringProperty = SimpleStringProperty()
+
     @FXML
     private fun initialize() {
+        selected.textProperty().bind(Bindings.`when`(selectedItem.isEmpty)
+            .then("언어를 선택해 주십시오")
+            .otherwise(selectedItem))
+
         languageListViewController.getSelected = this
+    }
+
+    fun openSelected() {
+        ConvoxAction.languageStructure(if (selectedItem.isEmpty.get()) return else selectedItem.get())
     }
 
     override fun whenLoad(stage: Stage, scene: Scene) {
@@ -42,18 +54,18 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED) { key: KeyEvent ->
             if (key.code == KeyCode.ENTER)
-                languageListViewController.openCurrentlySelected()
+                openSelected()
         }
     }
 
     override fun whenSelected(selected: TextFlow, clickEvent: MouseEvent) {
         when (clickEvent.clickCount) {
             1 -> {
-                this.selected.text = selected.children.joinToString(separator = "") { (it as Text).text }
+                selectedItem.set(selected.children.joinToString(separator = "") { (it as Text).text })
                 open.isDisable = false
             }
 
-            2 -> languageListViewController.openCurrentlySelected()
+            2 -> openSelected()
         }
     }
 
@@ -61,7 +73,7 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
         ConvoxAction.mainPage(stage = stage)
     }
 
-    fun openButton(): Unit = languageListViewController.openCurrentlySelected()
+    fun openButton(): Unit = openSelected()
 
     companion object : Loadable("main/main")
 }
