@@ -13,7 +13,7 @@
     </TextField>
     <BorderPane id="box">
         <center>
-            <ListView fx:id="languageList" fixedCellSize="38" onMousePressed="#whenSelected" prefWidth="250.0"/>
+            <ListView fx:id="list" fixedCellSize="38" onMousePressed="#whenSelected" prefWidth="250.0"/>
         </center>
     </BorderPane>
 </VBox>

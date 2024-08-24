@@ -1,9 +1,7 @@
 package org.shinytomato.convox.fxml
 
 import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
-import javafx.collections.transformation.FilteredList
 import javafx.fxml.FXML
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
@@ -15,85 +13,38 @@ import org.shinytomato.convox.data.DataManager
 import org.shinytomato.convox.i.FXMLController
 import org.shinytomato.convox.i.IGetSelected
 import org.shinytomato.convox.i.Loadable
-import java.util.function.Predicate
+import org.shinytomato.convox.i.SearchableListView
 
 class LanguageListController : FXMLController() {
 
     @FXML
     private lateinit var search: TextField
-    private var languages = FilteredList(FXCollections.observableList(DataManager.loadLanguageList()))
 
     @FXML
-    private lateinit var languageList: ListView<TextFlow>
+    private lateinit var list: ListView<TextFlow>
 
     // 외부에서 getSelected에 자기를 등록해야 함.
     internal var getSelected: IGetSelected<TextFlow>? = null
+
+    lateinit var searchableListView: SearchableListView
 
 
     @FXML
     private fun initialize() {
 
-        /*val bolding: (string: String, another: String) -> TextFlow = { it, another->
-            if (another.isEmpty()) TextFlow(Text(it))
-            else {
-                val index = it.indexOf(another)
-                TextFlow(
-                    Text(it.substring(0..<index.also(::println))),
-                    Text(it.substring(index..<index + another.length)).apply { style = "-fx-font-weight: bold" },
-                    Text(it.substring(index + another.length..<it.length)),
-                )
-            }
-        }*/
-
-        languageList.run {
-//            languageList.itemsProperty().bind(SimpleObjectProperty(FXCollections.observableList(languages.map { TextFlow(Text(it)) })))
-            updateList("")
-            //inp를 레퍼런스로 전달 못해주나...
-
-            prefHeightProperty().bind(Bindings.size(languageList.items).multiply(38).add(1))
-
-            search.textProperty().addListener { _, _, text ->
-                updateList(text)
-            }
-        }
-    }
-
-    private fun updateList(text: String) {
-        if (text.isEmpty()) {
-            languages.predicate = Predicate { true }
-            languageList.itemsProperty().bind(
-                SimpleObjectProperty(
-                    FXCollections.observableList(languages.map { TextFlow(Text(it)) })
-                )
-            )
-        } else {
-            languages.predicate = Predicate { it.contains(text) }
-            languageList.itemsProperty().bind(
-                SimpleObjectProperty(
-                    FXCollections.observableList(languages.map {
-                        val index = it.indexOf(text)
-                        val point = index + text.length
-                        TextFlow(
-                            Text(it.substring(0..<index)),
-                            Text(it.substring(index..<point))
-                                .apply { style = "-fx-font-weight: bold" },
-                            Text(it.substring(point..<it.length)),
-                        )
-                    })
-                )
-            )
-        }
+        list.prefHeightProperty().bind(Bindings.size(list.items).multiply(38).add(1))
+        searchableListView = SearchableListView(list, FXCollections.observableList(DataManager.loadLanguageList()), search)
     }
 
     fun whenSelected(event: MouseEvent) {
         getSelected?.whenSelected(
-            languageList.selectionModel.selectedItem,
+            list.selectionModel.selectedItem,
             event
         )
     }
 
     fun openCurrentlySelected() {
-        val selected = languageList.selectionModel.selectedItem ?: return
+        val selected = list.selectionModel.selectedItem ?: return
         ConvoxAction.languageStructure(selected.children.joinToString(separator = "") { (it as Text).text })
     }
 
