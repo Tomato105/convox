@@ -4,11 +4,3 @@
     -fx-focus-color: #888888;
     -fx-faint-focus-color: transparent;
 }
-
-#selected {
-    -fx-font-size: 14;
-}
-
-#info {
-    -fx-font-size: 11;
-}

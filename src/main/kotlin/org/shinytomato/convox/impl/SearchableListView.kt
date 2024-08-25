@@ -1,4 +1,4 @@
-package org.shinytomato.convox.i
+package org.shinytomato.convox.impl
 
 import javafx.collections.FXCollections
 import javafx.collections.transformation.FilteredList
@@ -14,10 +14,6 @@ class SearchableListView(
     searchedBy: TextField,
 ) {
     init {
-        /*filteredList.predicateProperty().bind(Bindings.`when`(searchedBy.textProperty().isEmpty)
-            .then(Predicate<String>{true})
-            .otherwise(Predicate<String>{it.contains(searchedBy.textProperty().get())})
-        )*/
 
         updateList("")
         searchedBy.textProperty().addListener { _, _, text ->

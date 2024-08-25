@@ -1,4 +1,4 @@
-package org.shinytomato.convox.i
+package org.shinytomato.convox.impl
 
 import javafx.scene.input.MouseEvent
 

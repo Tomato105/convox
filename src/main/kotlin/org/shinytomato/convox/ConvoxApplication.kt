@@ -5,6 +5,7 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction.mainPage
 import org.shinytomato.convox.ConvoxApplication.ApplicationState.stage
+import org.shinytomato.convox.controllers.languageInspection.LanguageInspectionController
 import org.shinytomato.convox.controllers.main.MainController
 import java.net.URL
 
@@ -36,8 +37,11 @@ class ConvoxApplication : Application() {
                 stage.scene = value
             }
 
+        // code: 패키지명 첫글자 + 아무문자나(클래스내에서 통일) + 발견된순서 + 아무숫자나
+        fun unintendedBehavior(code: String, description: String): String = "Unintended Behavior (e-$code): $description"
+
         fun String.getResource(): URL =
-            (instance.javaClass.getResource(this) ?: null.also { println("shinyerror: cannnot find: $this") })!!
+            (instance.javaClass.getResource(this).also { println("$this -> $it") } ?: null.also { unintendedBehavior("CA09","cannnot find: $this") })!!
     }
 }
 
@@ -46,9 +50,11 @@ object ConvoxAction {
         MainController.loadFXML(stage)
     }
 
-    fun languageStructure(selected: String) {
+    fun languageInspection(selected: String) {
         stage.hide()
         println("selected: $selected")
+        LanguageInspectionController.loadFXML(stage).initInput(selected)
+        stage.show()
     }
 }
 

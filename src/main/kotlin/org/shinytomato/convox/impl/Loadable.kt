@@ -1,4 +1,4 @@
-package org.shinytomato.convox.i
+package org.shinytomato.convox.impl
 
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
@@ -23,15 +23,15 @@ interface ILoadable {
     }
 }*/
 
-open class Loadable(private val fxml: String) {
+open class Loadable<T: FXMLController>(private val fxml: String) {
     fun loadFXML(
         stage: Stage,
-        action: FXMLController.(Stage, Scene) -> Unit = { _: Stage, _: Scene -> },
-    ): FXMLController {
+        action: T.(Stage, Scene) -> Unit = { _: Stage, _: Scene -> },
+    ): T {
         val loader = FXMLLoader("fxml/$fxml.fxml".getResource())
         val scene = Scene(loader.load())
 
-        return loader.getController<FXMLController>().apply {
+        return loader.getController<T>().apply {
             whenLoad(stage, scene)
             action(stage, scene)
             stage.scene = scene

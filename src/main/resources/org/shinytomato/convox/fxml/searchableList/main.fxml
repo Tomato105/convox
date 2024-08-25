@@ -4,8 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox stylesheets="@../css/languageList.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.shinytomato.convox.controllers.main.LanguageListController">
+<VBox stylesheets="@searchableList.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.shinytomato.convox.impl.SearchableListController">
     <TextField fx:id="search" promptText="검색...">
         <VBox.margin>
             <Insets bottom="10.0"/>
@@ -13,7 +13,7 @@
     </TextField>
     <BorderPane id="box">
         <center>
-            <ListView fx:id="list" fixedCellSize="38" onMousePressed="#whenSelected" prefWidth="250.0"/>
+            <ListView fx:id="list" onMousePressed="#whenSelected" prefWidth="250.0"/>
         </center>
     </BorderPane>
 </VBox>

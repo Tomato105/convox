@@ -16,9 +16,11 @@ import javafx.scene.text.TextFlow
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction
 import org.shinytomato.convox.ConvoxApplication.ApplicationState.stage
-import org.shinytomato.convox.i.FXMLController
-import org.shinytomato.convox.i.IGetSelected
-import org.shinytomato.convox.i.Loadable
+import org.shinytomato.convox.data.DataManager
+import org.shinytomato.convox.impl.FXMLController
+import org.shinytomato.convox.impl.IGetSelected
+import org.shinytomato.convox.impl.Loadable
+import org.shinytomato.convox.impl.SearchableListController
 
 class MainController : FXMLController(), IGetSelected<TextFlow> {
 
@@ -26,7 +28,7 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
     @FXML lateinit var new: Button
     @FXML lateinit var open: Button
     @FXML lateinit var languageListView: Parent
-    @FXML lateinit var languageListViewController: LanguageListController
+    @FXML lateinit var languageListViewController: SearchableListController
 
     var selectedItem: SimpleStringProperty = SimpleStringProperty()
 
@@ -36,11 +38,19 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
             .then("언어를 선택하여 주십시오")
             .otherwise(selectedItem))
 
+        languageListViewController.initInput(DataManager.loadLanguageList())
+        languageListViewController.list.run {
+            prefHeightProperty().bind(Bindings.size(items).multiply(38).add(1))
+            fixedCellSize = 38.0
+            maxHeight = 300.0
+            prefWidth = 220.0
+        }
+
         languageListViewController.getSelected = this
     }
 
     private fun openSelected() {
-        ConvoxAction.languageStructure(if (selectedItem.isEmpty.get()) return else selectedItem.get())
+        ConvoxAction.languageInspection(if (selectedItem.isEmpty.get()) return else selectedItem.get())
     }
 
     override fun whenLoad(stage: Stage, scene: Scene) {
@@ -75,5 +85,5 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
 
     fun openButton(): Unit = openSelected()
 
-    companion object : Loadable("main/main")
+    companion object : Loadable<MainController>("main/main")
 }
