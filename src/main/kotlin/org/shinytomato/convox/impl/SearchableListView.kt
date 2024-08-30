@@ -27,7 +27,7 @@ class SearchableListView(
                 filteredList.predicate = Predicate { true }
                 filteredList.map { TextFlow(Text(it)) }
             } else {
-                filteredList.predicate = Predicate { it.contains(text) }
+                filteredList.predicate = Predicate { it.contains(text, ignoreCase = true) }
                 filteredList.map {
                     val index = it.indexOf(text)
                     val point = index + text.length

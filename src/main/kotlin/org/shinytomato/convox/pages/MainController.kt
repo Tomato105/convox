@@ -1,8 +1,9 @@
-package org.shinytomato.convox.controllers.main
+package org.shinytomato.convox.pages
 
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
+import javafx.geometry.Insets
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
@@ -25,8 +26,8 @@ import org.shinytomato.convox.impl.SearchableListController
 class MainController : FXMLController(), IGetSelected<TextFlow> {
 
     @FXML lateinit var selected: Label
-    @FXML lateinit var new: Button
-    @FXML lateinit var open: Button
+    @FXML lateinit var newButton: Button
+    @FXML lateinit var openButton: Button
     @FXML lateinit var languageListView: Parent
     @FXML lateinit var languageListViewController: SearchableListController
 
@@ -38,12 +39,14 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
             .then("언어를 선택하여 주십시오")
             .otherwise(selectedItem))
 
-        languageListViewController.initInput(DataManager.loadLanguageList())
-        languageListViewController.list.run {
-            prefHeightProperty().bind(Bindings.size(items).multiply(38).add(1))
-            fixedCellSize = 38.0
-            maxHeight = 300.0
-            prefWidth = 220.0
+        languageListViewController.run {
+            initInput(DataManager.loadLanguageList())
+
+            val binding = Bindings.size(list.items).multiply(40).add(21)
+            list.maxHeightProperty().bind(binding)
+            list.padding = Insets(10.0, 10.0, 10.0, 10.0)
+            list.fixedCellSize = 40.0
+            list.prefWidth = 220.0
         }
 
         languageListViewController.getSelected = this
@@ -72,7 +75,7 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
         when (clickEvent.clickCount) {
             1 -> {
                 selectedItem.set(selected.children.joinToString(separator = "") { (it as Text).text })
-                open.isDisable = false
+                openButton.isDisable = false
             }
 
             2 -> openSelected()
@@ -85,5 +88,5 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
 
     fun openButton(): Unit = openSelected()
 
-    companion object : Loadable<MainController>("main/main")
+    companion object : Loadable<MainController>("main")
 }

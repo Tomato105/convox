@@ -5,8 +5,8 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction.mainPage
 import org.shinytomato.convox.ConvoxApplication.ApplicationState.stage
-import org.shinytomato.convox.controllers.languageInspection.LanguageInspectionController
-import org.shinytomato.convox.controllers.main.MainController
+import org.shinytomato.convox.pages.LanguageInspectionController
+import org.shinytomato.convox.pages.MainController
 import java.net.URL
 
 class ConvoxApplication : Application() {
@@ -53,7 +53,9 @@ object ConvoxAction {
     fun languageInspection(selected: String) {
         stage.hide()
         println("selected: $selected")
-        LanguageInspectionController.loadFXML(stage).initInput(selected)
+        LanguageInspectionController.loadFXML(stage) { _: Stage, _: Scene ->
+            initInput(selected)
+        }
         stage.show()
     }
 }

@@ -30,14 +30,14 @@ data class LanguageConfig(
             br.readText()
                 .splitTrimmed('\u0001')
                 .map { word ->
-                    val divided = word.splitTrimmed('\u0003')
+                    val divided = word.splitTrimmed('\u0004')
                     val attrPart = divided[0].splitTrimmed('\u0002').toMutableList()
                     val meaningPart = divided[1]
 
                     val wordName = attrPart[0]
 
                     val attrs = attrPart.subList(1, attrPart.size).associate { attrPair ->
-                        val attrElements = attrPair.splitTrimmed('\u0000')
+                        val attrElements = attrPair.splitTrimmed('\u0003')
                         Keyword(attrNames, attrElements[0].toInt()) to attrElements[1]
                     }
 

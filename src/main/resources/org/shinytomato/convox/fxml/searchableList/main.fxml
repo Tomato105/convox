@@ -6,14 +6,15 @@
 
 <VBox stylesheets="@searchableList.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.shinytomato.convox.impl.SearchableListController">
-    <TextField fx:id="search" promptText="검색...">
+    <TextField id="search" fx:id="search" promptText="검색...">
         <VBox.margin>
             <Insets bottom="10.0"/>
         </VBox.margin>
     </TextField>
-    <BorderPane id="box">
-        <center>
-            <ListView fx:id="list" onMousePressed="#whenSelected" prefWidth="250.0"/>
-        </center>
-    </BorderPane>
+    <ScrollPane fx:id="container" hbarPolicy="NEVER" vbarPolicy="NEVER">
+        <VBox.margin>
+            <Insets bottom="10.0"/>
+        </VBox.margin>
+        <ListView fx:id="list" fixedCellSize="30" onMousePressed="#whenSelected" prefWidth="250.0"/>
+    </ScrollPane>
 </VBox>

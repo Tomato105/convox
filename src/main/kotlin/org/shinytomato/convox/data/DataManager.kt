@@ -7,7 +7,7 @@ object DataManager {
     val dictRoot = "data/dict"
     fun loadLanguageList(): List<String> =
         File("data/index.dat").reader().buffered().use { br ->
-            br.lines().map { it.trim() }.filter { it.dictRooted().also(::println).exists() }.toList()
+            br.lines().map { it.trim() }.filter { it.dictRooted().exists() }.toList()
         }
 }
 

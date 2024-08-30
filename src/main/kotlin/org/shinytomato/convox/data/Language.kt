@@ -13,9 +13,9 @@ data class Language(
                 br.write("\u0001$wordName")
                 wordContents.forEach { wordContent ->
                     wordContent.attr.forEach { (attrName, attrValue) ->
-                        br.write("\u0002${attrName.code}\u0000$attrValue")
+                        br.write("\u0002${attrName.code}\u0003$attrValue")
                     }
-                    br.write(3)
+                    br.write(4)
                     wordContent.meanings.forEach { (wordClass, meanings) ->
                         br.write("\u0005${wordClass.code}")
                         meanings.forEach { meaning -> br.write(meaning.write()) }
@@ -33,9 +33,9 @@ data class Language(
     }
     /*
     1 wordName
-    2 attr 0 value
-    2 attr 0 value
-    3
+    2 attr 3 value
+    2 attr 3 value
+    4
         5 wordClass
             6 meaning
                 7 example

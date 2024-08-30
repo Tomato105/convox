@@ -1,27 +1,31 @@
-#box {
+/*#box {
    -fx-border-color: #888888;
    -fx-border-width: 1px;
    -fx-border-style: solid;
    -fx-border-radius: 5;
+}*/
+
+#search {
+    -fx-background-color: #ffffff;
+}
+
+.scroll-pane {
+   -fx-background-color: transparent;
+   -fx-background-width: 0px;
+   -fx-background-radius: 10;
 }
 
 .list-view {
+    -fx-background-color: #ffffff;
     -fx-background-insets: 0;
-    -fx-background-radius: 5 5 5 5;
+    -fx-background-radius: 10;
+
 }
 
 .list-cell {
-    -fx-background-radius: 5 0 0 5;
+    -fx-background-radius: 10;
     -fx-background-color: transparent;
     -fx-padding: 10;
-}
-
-.list-cell:odd {
-    -fx-background-color: #ffffff;
-}
-
-.list-cell:even {
-    -fx-background-color: #ffffff;
 }
 
 .list-cell:hover {
@@ -31,4 +35,9 @@
 .list-cell:selected {
     -fx-text-fill: #000000;
     -fx-background-color: #c0e0ff;
+}
+
+.list-view .scroll-bar * {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
 }

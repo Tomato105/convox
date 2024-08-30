@@ -26,14 +26,15 @@ interface ILoadable {
 open class Loadable<T: FXMLController>(private val fxml: String) {
     fun loadFXML(
         stage: Stage,
-        action: T.(Stage, Scene) -> Unit = { _: Stage, _: Scene -> },
+        preAction: T.(Stage, Scene) -> Unit = { _: Stage, _: Scene -> },
     ): T {
-        val loader = FXMLLoader("fxml/$fxml.fxml".getResource())
+        val loader = FXMLLoader("fxml/$fxml/main.fxml".getResource())
         val scene = Scene(loader.load())
 
+        // 제공하는 scene은 stage.scene 이 아니라 로드 중인 scene 이므로 필요함.
         return loader.getController<T>().apply {
+            preAction(stage, scene)
             whenLoad(stage, scene)
-            action(stage, scene)
             stage.scene = scene
         }
     }
