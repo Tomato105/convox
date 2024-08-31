@@ -42,9 +42,9 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
         languageListViewController.run {
             initInput(DataManager.loadLanguageList())
 
-            val binding = Bindings.size(list.items).multiply(40).add(21)
-            list.maxHeightProperty().bind(binding)
-            list.padding = Insets(10.0, 10.0, 10.0, 10.0)
+            val binding = Bindings.size(list.items).multiply(40).add(1 + listPadding * 2)
+            list.minHeightProperty().bind(binding)
+            list.padding = Insets(listPadding, listPadding, listPadding, listPadding)
             list.fixedCellSize = 40.0
             list.prefWidth = 220.0
         }
@@ -59,7 +59,7 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
     override fun whenLoad(stage: Stage, scene: Scene) {
         stage.run {
             title = "Convox에 오신 것을 환영합니다"
-            icons.add(Image("org/shinytomato/convox/image/icon.png"))
+            icons.add(Image("org/shinytomato/convox/image/application-icon.png"))
             width = 500.0
             height = 400.0
             isResizable = false
@@ -88,5 +88,7 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
 
     fun openButton(): Unit = openSelected()
 
-    companion object : Loadable<MainController>("main")
+    companion object : Loadable<MainController>("main") {
+        val listPadding = 10.0
+    }
 }

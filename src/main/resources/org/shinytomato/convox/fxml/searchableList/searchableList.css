@@ -13,19 +13,19 @@
    -fx-background-color: transparent;
    -fx-background-width: 0px;
    -fx-background-radius: 10;
+   -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 1), 20, 0.5, 0, 0);
 }
 
 .list-view {
     -fx-background-color: #ffffff;
     -fx-background-insets: 0;
     -fx-background-radius: 10;
-
 }
 
 .list-cell {
     -fx-background-radius: 10;
     -fx-background-color: transparent;
-    -fx-padding: 10;
+    -fx-padding: 10 10 10 10;
 }
 
 .list-cell:hover {
@@ -33,11 +33,5 @@
 }
 
 .list-cell:selected {
-    -fx-text-fill: #000000;
     -fx-background-color: #c0e0ff;
-}
-
-.list-view .scroll-bar * {
-    -fx-pref-width: 0;
-    -fx-pref-height: 0;
 }

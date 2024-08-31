@@ -1,5 +1,6 @@
 package org.shinytomato.convox.impl
 
+import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
 import javafx.collections.transformation.FilteredList
 import javafx.scene.control.ListView
@@ -11,14 +12,18 @@ import java.util.function.Predicate
 class SearchableListView(
     private val listview: ListView<TextFlow>,
     private val filteredList: FilteredList<String>,
-    searchedBy: TextField,
+    private val searchedBy: TextField,
 ) {
-    init {
 
+    private val listener = ChangeListener { value, old, new -> updateList(new) }
+
+    init {
         updateList("")
-        searchedBy.textProperty().addListener { _, _, text ->
-            updateList(text)
-        }
+        searchedBy.textProperty().addListener(listener)
+    }
+
+    fun close() {
+        searchedBy.textProperty().removeListener(listener)
     }
 
     private fun updateList(text: String) {

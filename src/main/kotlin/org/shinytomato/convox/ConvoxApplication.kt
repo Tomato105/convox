@@ -38,10 +38,10 @@ class ConvoxApplication : Application() {
             }
 
         // code: 패키지명 첫글자 + 아무문자나(클래스내에서 통일) + 발견된순서 + 아무숫자나
-        fun unintendedBehavior(code: String, description: String): String = "Unintended Behavior (e-$code): $description"
+        fun undefinedBehavior(code: String, description: String): String = "Unintended Behavior (e-$code): $description"
 
         fun String.getResource(): URL =
-            (instance.javaClass.getResource(this).also { println("$this -> $it") } ?: null.also { unintendedBehavior("CA09","cannnot find: $this") })!!
+            (instance.javaClass.getResource(this).also { println("$this -> $it") } ?: null.also { undefinedBehavior("CA09","cannnot find: $this") })!!
     }
 }
 
