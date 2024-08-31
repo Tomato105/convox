@@ -4,21 +4,21 @@ import java.io.File
 
 data class Language(
     val config: LanguageConfig,
-    val meanings: Map<String, List<WordContent>>,
+    val meanings: Map<String, List<LocatedWord>>,
 ) {
     fun saveLanguage(rootedDir: String) = saveLanguage(rootedDir.dictRooted())
     fun saveLanguage(dir: File) {
-        dir.resolve("words").writer().buffered().use { br ->
-            meanings.forEach { (wordName, wordContents) ->
-                br.write("\u0001$wordName")
-                wordContents.forEach { wordContent ->
-                    wordContent.attr.forEach { (attrName, attrValue) ->
-                        br.write("\u0002${attrName.code}\u0003$attrValue")
+        dir.resolve("words").writer().buffered().use { bw ->
+            meanings.forEach { (wordName, locatedWords) ->
+                bw.write("\u0001$wordName")
+                locatedWords.forEach { locatedWord ->
+                    locatedWord.content.attr.forEach { (attrName, attrValue) ->
+                        bw.write("\u0002${attrName.code}\u0003$attrValue")
                     }
-                    br.write(4)
-                    wordContent.meanings.forEach { (wordClass, meanings) ->
-                        br.write("\u0005${wordClass.code}")
-                        meanings.forEach { meaning -> br.write(meaning.write()) }
+                    bw.write(4)
+                    locatedWord.content.meanings.forEach { (wordClass, meanings) ->
+                        bw.write("\u0005${wordClass.code}")
+                        meanings.forEach { meaning -> bw.write(meaning.write()) }
                     }
                 }
             }
@@ -45,6 +45,8 @@ data class Language(
             6 meaning
      */
 }
+
+data class LocatedWord(val content: WordContent, val loc: Int)
 
 data class WordContent(val attr: Map<Keyword, String>, val meanings: Map<Keyword, List<Meaning>>)
 

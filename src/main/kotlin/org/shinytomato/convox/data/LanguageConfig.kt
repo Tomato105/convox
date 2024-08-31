@@ -20,16 +20,19 @@ data class LanguageConfig(
     fun loadLanguage(rootedDir: String): Language = loadLanguage(rootedDir.dictRooted())
     fun loadLanguage(dir: File): Language {
 
-        fun String.splitTrimmed(delim: Char) =
+        fun String.splitTrimmed(delim: Char): List<String> =
             this.split(delim).run {
                 if (first().isEmpty()) subList(1, this.size)
                 else this
             }
 
+        var caret: Int = 0
+
         val words = dir.resolve("words.convox").reader().buffered().use { br ->
             br.readText()
                 .splitTrimmed('\u0001')
                 .map { word ->
+                    caret++
                     val divided = word.splitTrimmed('\u0004')
                     val attrPart = divided[0].splitTrimmed('\u0002').toMutableList()
                     val meaningPart = divided[1]
@@ -52,10 +55,14 @@ data class LanguageConfig(
                         wordClassName to meanings
                     }
 
-                    wordName to WordContent(attrs, meanings)
+                    val result = wordName to (WordContent(attrs, meanings) to caret)
+                    caret += word.length
+                    result
                 }
                 .groupBy { it.first }
-                .mapValues { (_, values) -> values.map { it.second } }
+                .mapValues { (_, values) -> values.map { ( _, word ) ->
+                    LocatedWord(word.first, word.second)
+                } }
         }
 
 
