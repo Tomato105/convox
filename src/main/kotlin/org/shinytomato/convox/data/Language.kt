@@ -12,10 +12,10 @@ data class Language(
             meanings.forEach { (wordName, locatedWords) ->
                 bw.write("\u0001$wordName")
                 locatedWords.forEach { locatedWord ->
-                    locatedWord.content.attr.forEach { (attrName, attrValue) ->
-                        bw.write("\u0002${attrName.code}\u0003$attrValue")
+                    locatedWord.content.attrs.forEach { attr ->
+                        bw.write("\u0005${attr.keyword.code}\u0006${attr.write()}")
                     }
-                    bw.write(4)
+                    bw.write(2)
                     locatedWord.content.meanings.forEach { (wordClass, meanings) ->
                         bw.write("\u0005${wordClass.code}")
                         meanings.forEach { meaning -> bw.write(meaning.write()) }
@@ -26,32 +26,48 @@ data class Language(
         config.saveConfig(dir)
     }
 
-
     companion object {
         fun loadLanguage(rootedDir: String): Language = loadLanguage(rootedDir.dictRooted())
         fun loadLanguage(dir: File): Language = LanguageConfig.loadConfig(dir).loadLanguage(dir)
     }
-    /*
-    1 wordName
-    2 attr 3 value
-    2 attr 3 value
-    4
-        5 wordClass
-            6 meaning
-                7 example
-            6 meaning
-            6 meaning
-        5 wordClass
-            6 meaning
-     */
 }
 
 data class LocatedWord(val content: WordContent, val loc: Int)
 
-data class WordContent(val attr: Map<Keyword, String>, val meanings: Map<Keyword, List<Meaning>>)
+data class WordContent(val attrs: List<Attribute>, val meanings: Map<Keyword, List<Meaning>>)
+
+sealed class Attribute(val keyword: Keyword) {
+    abstract fun write(): String
+
+    class EmptyAttribute(keyword: Keyword) : Attribute(keyword) {
+        override fun write(): String = "\u0005${keyword.code}"
+    }
+
+    class SimpleAttribute(keyword: Keyword, val value: String) : Attribute(keyword) {
+        override fun write(): String = "\u0005${keyword.code}\u0006${value}"
+    }
+
+    class ListAttribute(keyword: Keyword, val values: List<String>) : Attribute(keyword) {
+        override fun write(): String {
+            val valuePart = values.fold(StringBuilder()) { acc, s -> acc.append("\u0006$s") }
+            return "\u0005${keyword.code}\u0006$valuePart"
+        }
+    }
+
+    companion object {
+        fun from(keyword: Keyword, x: List<String>): Attribute {
+            return when (x.size) {
+                0 -> EmptyAttribute(keyword)
+                1 -> SimpleAttribute(keyword, x.first())
+                else -> ListAttribute(keyword, x)
+            }
+        }
+    }
+}
 
 data class Keyword(val code: Int, val text: String) {
-    override fun toString(): String = "Keyword(code=$code, text=$text)"
+
+    override fun toString(): String = "Keyword($code:$text)"
 
     constructor(from: List<String>, index: Int) : this(index, from[index])
 }

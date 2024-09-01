@@ -5,15 +5,18 @@ import java.io.File
 data class LanguageConfig(
     val attrNames: MutableList<String>,
     val wordClasses: MutableList<String>,
+    val tagNames: MutableList<String>
 ) {
 
     fun saveConfig(rootedDir: String) = saveConfig(rootedDir.dictRooted())
     fun saveConfig(dir: File) {
         dir.resolve("config.config").writer().buffered().use { bw ->
             bw.write("attr:\n")
-            attrNames.forEach { bw.write("$it\n") }
+            attrNames.forEach { bw.write("\t$it\n") }
             bw.write("class:\n")
-            wordClasses.forEach { bw.write("$it\n") }
+            wordClasses.forEach { bw.write("\t$it\n") }
+            bw.write("tag:\n")
+            tagNames.forEach { bw.write("\t$it\n") }
         }
     }
 
@@ -26,22 +29,22 @@ data class LanguageConfig(
                 else this
             }
 
-        var caret: Int = 0
+        var caret = 0
 
         val words = dir.resolve("words.convox").reader().buffered().use { br ->
             br.readText()
                 .splitTrimmed('\u0001')
                 .map { word ->
                     caret++
-                    val divided = word.splitTrimmed('\u0004')
-                    val attrPart = divided[0].splitTrimmed('\u0002').toMutableList()
+                    val divided = word.splitTrimmed('\u0002')
+                    val attrPart = divided[0].splitTrimmed('\u0005').toMutableList()
                     val meaningPart = divided[1]
 
                     val wordName = attrPart[0]
 
-                    val attrs = attrPart.subList(1, attrPart.size).associate { attrPair ->
-                        val attrElements = attrPair.splitTrimmed('\u0003')
-                        Keyword(attrNames, attrElements[0].toInt()) to attrElements[1]
+                    val attrs = attrPart.subList(1, attrPart.size).map { attrPair ->
+                        val attrElements = attrPair.splitTrimmed('\u0006')
+                        Attribute.from(Keyword(attrNames, attrElements[0].toInt()), attrElements.subList(1, attrElements.size))
                     }
 
                     val meanings = meaningPart.splitTrimmed('\u0005').associate { meaningPair ->
@@ -74,9 +77,9 @@ data class LanguageConfig(
     NUL SOH STX ETX EOT ENQ ACK BEL NAK
 
     1 wordName
-    2 attr 0 value
-    2 attr 0 value
-    3
+        2 attr 3 value
+        2 attr 3 value
+    4
         5 wordClass
             6 meaning
                 7 example
@@ -84,6 +87,29 @@ data class LanguageConfig(
             6 meaning
         5 wordClass
             6 meaning
+    
+    1 wordName
+        5 attrCode 6 value
+        5 attrCode 6 value
+    2
+        5 classCode
+            6 meaning 7 example
+            6 meaning
+        5 classCode
+            6 meaning 7 example
+    2
+
+    SOH wordName
+        ENQ attrCode ACK value
+        ENQ attrCode ACK value
+    EOT
+        ENQ classCode
+            ACK meaning BEL example
+            ACK meaning
+        ENQ classCode
+            ACK meaning BEL example
+    EOT
+
      */
 
     companion object {
@@ -91,6 +117,7 @@ data class LanguageConfig(
         fun loadConfig(dir: File): LanguageConfig {
             val attrNames: ArrayList<String> = arrayListOf()
             val wordClasses: ArrayList<String> = arrayListOf()
+            val tagNames: ArrayList<String> = arrayListOf()
             var target: ArrayList<String>? = null
 
             dir.resolve("config.config")
@@ -103,13 +130,14 @@ data class LanguageConfig(
                             target = when (ln.removeSuffix(":")) {
                                 "attr" -> attrNames
                                 "class" -> wordClasses
+                                "tag" -> tagNames
                                 else -> null
                             }
                         else
                             target?.add(ln)
                     }
                 }
-            return LanguageConfig(attrNames, wordClasses)
+            return LanguageConfig(attrNames, wordClasses, tagNames)
         }
     }
 }

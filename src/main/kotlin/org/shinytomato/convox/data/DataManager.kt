@@ -16,16 +16,13 @@ fun String.dictRootedString(): String = "$dictRoot/$this"
 /*
 
 
-SOH sen NUL
-STX p NUL send ETX
-STX o NUL 영어 send ETX
-STX m NUL
-    ENQ v NUL
-        ACK 말하다
-            BEL 예문 NUL
-    NAK
-ETX
+SOH wordName
+{STX attrCode ETX attrValue}
 EOT
+{ENQ classCode ACK meaning BEL example}
+(EOT)
+
+{list} (optional)
  */
 
 /*sealed class WordClass(val code: Int, val abbreviation: Set<String>) {

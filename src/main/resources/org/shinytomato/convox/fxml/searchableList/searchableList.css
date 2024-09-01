@@ -13,7 +13,6 @@
    -fx-background-color: transparent;
    -fx-background-width: 0px;
    -fx-background-radius: 10;
-   -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 1), 20, 0.5, 0, 0);
 }
 
 .list-view {
