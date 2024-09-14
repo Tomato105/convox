@@ -31,7 +31,7 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
     @FXML lateinit var languageListView: Parent
     @FXML lateinit var languageListViewController: SearchableListController
 
-    var selectedItem: SimpleStringProperty = SimpleStringProperty()
+    private val selectedItem: SimpleStringProperty = SimpleStringProperty()
 
     @FXML
     private fun initialize() {

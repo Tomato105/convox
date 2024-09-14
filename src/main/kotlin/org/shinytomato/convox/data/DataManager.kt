@@ -1,18 +1,26 @@
 package org.shinytomato.convox.data
 
-import org.shinytomato.convox.data.DataManager.dictRoot
+import org.shinytomato.convox.data.DataManager.DICT_ROOT
+import org.shinytomato.convox.data.DataManager.dictDir
 import java.io.File
 
 object DataManager {
-    val dictRoot = "data/dict"
+    const val DATA_ROOT = "data/"
+    const val DICT_ROOT = "${DATA_ROOT}dict/"
+    const val STD_ROOT = "${DATA_ROOT}std/"
+
+    val dataDir = File("data")
+    val dictDir = dataDir.resolve("dict")
+    val stdDir = dataDir.resolve("std")
+
     fun loadLanguageList(): List<String> =
         File("data/index.dat").reader().buffered().use { br ->
             br.lines().map { it.trim() }.filter { it.dictRooted().exists() }.toList()
         }
 }
 
-fun String.dictRooted(): File = File("$dictRoot/$this")
-fun String.dictRootedString(): String = "$dictRoot/$this"
+fun String.dictRooted(): File = dictDir.resolve(this)
+fun String.dictRootedString(): String = "$DICT_ROOT/$this"
 /*
 
 

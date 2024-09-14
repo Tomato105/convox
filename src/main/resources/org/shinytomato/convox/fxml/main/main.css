@@ -1,0 +1,14 @@
+#selected {
+    -fx-font-size: 14;
+}
+
+#info {
+    -fx-font-size: 11;
+}
+
+.button {
+    -fx-border-color: #aaaaaa;
+    -fx-border-radius: 5;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 5;
+}
