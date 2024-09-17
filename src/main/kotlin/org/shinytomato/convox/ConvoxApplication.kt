@@ -37,11 +37,25 @@ class ConvoxApplication : Application() {
                 stage.scene = value
             }
 
-        // code: 패키지명 첫글자 + 아무문자나(클래스내에서 통일) + 발견된순서 + 아무숫자나
-        fun undefinedBehavior(code: String, description: String): String = "Unintended Behavior (e-$code): $description"
+        fun warnToString(code: String, description: String): String = "Warning (e-$code): $description"
+        fun warn(code: String, description: String) {
+            println(">>> ${warnToString(code, description)} <<<")
+        }
+        fun <T> T.warn(code: String, description: String): T {
+            warn(code, description)
+            return this
+        }
+
+        /*fun <T> T.warnIfNull(code: String, description: String): T {
+            return this ?: warn(code, description)
+        }
+
+        fun <T> T.warnIf(code: String, description: String, action: T.() -> Boolean): T {
+            return if (action()) warn(code, description) else this
+        }*/
 
         fun String.getResource(): URL =
-            (instance.javaClass.getResource(this).also { println("$this -> $it") } ?: null.also { undefinedBehavior("CA09","cannnot find: $this") })!!
+            (instance.javaClass.getResource(this).also { println("$this -> $it") } ?: null.also { warn("CA09","cannnot find: $this") })!!
     }
 }
 

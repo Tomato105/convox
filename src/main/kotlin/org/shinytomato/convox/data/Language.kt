@@ -1,5 +1,6 @@
 package org.shinytomato.convox.data
 
+import org.shinytomato.convox.ConvoxApplication
 import org.shinytomato.convox.data.DataManager.stdDir
 import java.io.File
 
@@ -20,8 +21,8 @@ class Language(
 ) {
     fun words() = words.toMap()
 
-    val edited: HashSet<Word> = HashSet()
-    val removed: HashSet<Word> = HashSet()
+    private val edited: HashSet<Word> = HashSet()
+    private val removed: HashSet<Word> = HashSet()
 
     override fun toString(): String {
         val sb = StringBuilder("Language(\n\tconfig=")
@@ -52,22 +53,24 @@ class Language(
             .chunked(WORDS_A_PAGE)
             .forEach { words ->
                 saveToFile(
-                    wrdDir.resolve((i++).toString()),
+                    wrdDir.resolve("${i++}$PAGE_EXTENDER"),
                     words,
                     keywordMap,
                 )
             }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun find(name: String, id: Int): Word? = words[name]?.findById(id)
 
-    fun edit(name: String, id: Int): Word? =
+    private fun getEdited(name: String, id: Int): Word? =
         find(name, id)?.also {
             editInFile(it)
             edited.add(it)
         }
+
     fun edit(name: String, id: Int, editing: Word.() -> Unit): Unit =
-        edit(name, id)?.editing() ?: Unit
+        getEdited(name, id)?.editing() ?: Unit
 
     //TODO: 만약에
     // editing에서 org.shinytomato.convox.data.Word 내부 property에 접근할 수 없으면, DSL 만들어서 간접적으로 객체 제공
@@ -77,25 +80,33 @@ class Language(
     //          tags.add("a") // 이런 식
     //      }
     //  }
-    fun editInFile(word: Word) {
+    private fun editInFile(word: Word) {
         //TODO:
         // size가 더 작아졌으면 그냥 앞당기고
         // size가 더 늘어났으면 늘어난 만큼 뒤로 하던가 or 나머지 앞당기고 이걸 맨 뒤에 놓음
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun updateWordValue(name: String, function: WordValue.() -> WordValue) {
         words[name] = words[name]?.function() ?: return
     }
 
-    fun remove(name: String, id: Int) =
-        updateWordValue(name) {
-            val word = findById(id) ?: return@updateWordValue this
-            removeInFile(word)
-            removed.add(word)
-            minusById(id)
-        }
+    fun remove(name: String, id: Int) = updateWordValue(name) {
+        val word = findById(id) ?: return@updateWordValue this
+        removeInFile(word)
+        removed.add(word)
+        minusById(id)
+    }
+    /*words.computeIfPresent(name) {
+        _, wordValue ->
+        val word = findById(id) ?: return@computeIfPresent wordValue
+        removeInFile(word)
+        removed.add(word)
+        wordValue.minusById(id)
+    }*/
 
-    fun removeInFile(word: Word) {
+
+    private fun removeInFile(word: Word) {
         //TODO:
         // 앞당기기
     }
@@ -103,16 +114,11 @@ class Language(
     companion object {
 
         private const val WORD_DIR = "wrd"
-
-        const val HEADER = '\u0001'
-        const val DIVIDER = '\u0004'
-        const val QUERY = '\u0005' // ?a
-        const val ASSIGN = '\u0006' // =b
-        const val DESCRIBE = '\u0007' // ()
+        private const val PAGE_EXTENDER = ".dat"
 
         private const val WORDS_A_PAGE = 20
 
-        fun readFromDir(langDir: File, languageConfig: LanguageConfig): Language =
+        private fun readFromDir(langDir: File, languageConfig: LanguageConfig): Language =
             Language(
                 languageConfig,
                 HashMap(
@@ -135,17 +141,27 @@ data class LanguageConfig(
         private const val CLASSES_FILE = "classes.dat"
         private const val TAGS_FILE = "tags.dat"
 
-        private fun xFromFile(langDir: File, x: String): MutableList<Keyword> = langDir.resolve(x)
-            .run { if (isFile) this else stdDir.resolve(x) }
-            .bufferedReader()
-            .use { br ->
-                br.lines().map(String::trim)
-            }
-            .map { Keyword(it) }
-            .toList()
+        private fun attributesFromDir(langDir: File, x: String): MutableList<Keyword> {
+            val file = langDir.resolve(x)
+                .run { if (isFile) this else stdDir.resolve(x) }
 
-        private fun classesFromDir(langDir: File): MutableList<Keyword> = xFromFile(langDir, CLASSES_FILE)
-        private fun tagsFromDir(langDir: File): MutableList<Keyword> = xFromFile(langDir, TAGS_FILE)
+            if (!file.isFile) {
+                ConvoxApplication.warn("dZ1Q", "Failed to load standard ")
+                return mutableListOf()
+            }
+
+            return file
+                .bufferedReader()
+                .use { br ->
+                    br.lineSequence()
+                        .map(String::trim)
+                        .map(::Keyword)
+                        .toMutableList()
+                }
+        }
+
+        private fun classesFromDir(langDir: File): MutableList<Keyword> = attributesFromDir(langDir, CLASSES_FILE)
+        private fun tagsFromDir(langDir: File): MutableList<Keyword> = attributesFromDir(langDir, TAGS_FILE)
 
         fun fromDir(langDir: File): LanguageConfig =
             LanguageConfig(classesFromDir(langDir), tagsFromDir(langDir))

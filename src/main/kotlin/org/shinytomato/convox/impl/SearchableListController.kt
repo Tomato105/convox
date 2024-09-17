@@ -8,12 +8,12 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextField
 import javafx.scene.input.MouseEvent
 import javafx.scene.text.TextFlow
-import org.shinytomato.convox.ConvoxApplication.ApplicationState.undefinedBehavior
+import org.shinytomato.convox.ConvoxApplication
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 open class SearchableListController() : FXMLController() {
-    private var input: FilteredList<String> = FilteredList(FXCollections.observableList(listOf(undefinedBehavior("iS1m", "SearchableListController#FilteredList not initialized"))))
+    private var input: FilteredList<String> = FilteredList(FXCollections.observableList(listOf(ConvoxApplication.warnToString("iS1m", "SearchableListController#FilteredList not initialized"))))
 
     @FXML lateinit var container: ScrollPane
     @FXML private lateinit var search: TextField

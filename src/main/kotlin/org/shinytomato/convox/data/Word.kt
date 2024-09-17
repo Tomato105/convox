@@ -1,10 +1,10 @@
 package org.shinytomato.convox.data
 
-import org.shinytomato.convox.data.Language.Companion.ASSIGN
-import org.shinytomato.convox.data.Language.Companion.DESCRIBE
-import org.shinytomato.convox.data.Language.Companion.DIVIDER
-import org.shinytomato.convox.data.Language.Companion.HEADER
-import org.shinytomato.convox.data.Language.Companion.QUERY
+import org.shinytomato.convox.data.Word.Companion.ASSIGN
+import org.shinytomato.convox.data.Word.Companion.DESCRIBE
+import org.shinytomato.convox.data.Word.Companion.DIVIDER
+import org.shinytomato.convox.data.Word.Companion.HEADER
+import org.shinytomato.convox.data.Word.Companion.QUERY
 import java.io.File
 
 
@@ -61,6 +61,12 @@ class Word(
             .joinToString("")
 
     companion object {
+
+        const val HEADER = '\u0001'
+        const val DIVIDER = '\u0004'
+        const val QUERY = '\u0005' // ?a
+        const val ASSIGN = '\u0006' // =b
+        const val DESCRIBE = '\u0007' // ()
 
         private fun fromString(string: String, classes: List<Keyword>, page: Int, loc: Int, size: Int): Word {
             val split = string.split(DIVIDER)
@@ -192,6 +198,10 @@ class KeywordMap(list: MutableList<Keyword>) {
 
 
 data class Keyword(val text: String) {
+
+
+    //TODO: Keyword가 필요한지 생각해보자.
+    // 그냥 KeywordMap가지고 String으로 하면 되지 않나?
 
     fun code(keywordMap: KeywordMap): Int? = keywordMap.indexOf(this)
 
