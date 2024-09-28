@@ -1,10 +1,5 @@
 package org.shinytomato.convox.data
 
-import org.shinytomato.convox.data.Word.Companion.ASSIGN
-import org.shinytomato.convox.data.Word.Companion.DESCRIBE
-import org.shinytomato.convox.data.Word.Companion.DIVIDER
-import org.shinytomato.convox.data.Word.Companion.HEADER
-import org.shinytomato.convox.data.Word.Companion.QUERY
 import java.io.File
 
 
@@ -12,7 +7,7 @@ class Word(
     val id: Int,
     name: String,
     private val tags: MutableSet<Keyword>,
-    private val attrs: MutableMap<RelativeAttribute, MutableList<String>>,
+    private val attrs: MutableMap<RelativeAttr, MutableList<String>>,
     private val meanings: MutableMap<Keyword, MutableList<Meaning>>,
     val page: Int,
     val loc: Int,
@@ -21,33 +16,39 @@ class Word(
     var name = name
         private set
 
+
     fun tags(): Set<Keyword> = tags.toSet()
-    fun attrs(): Map<RelativeAttribute, MutableList<String>> = attrs.toMap()
+    fun attrs(): Map<RelativeAttr, MutableList<String>> = attrs.toMap()
     fun meanings(): Map<Keyword, MutableList<Meaning>> = meanings.toMap()
 
     fun registerTag(language: Language, tag: Keyword): Unit =
-        language.edit(name, id) { tags.add(tag) }
+        language.edit(this) { tags.add(tag) }
     fun unregisterTag(language: Language, tag: Keyword): Unit =
-        language.edit(name, id) { tags.remove(tag) }
+        language.edit(this) { tags.remove(tag) }
 
     fun registerMeaning(language: Language, wordClass: Keyword, meaning: Meaning): Unit =
-        language.edit(name, id) { meanings[wordClass]?.add(meaning) }
+        language.edit(this) { meanings[wordClass]?.add(meaning) }
     fun unregisterMeaning(language: Language, wordClass: Keyword, meaning: Meaning): Unit =
-        language.edit(name, id) { meanings[wordClass]?.remove(meaning) }
+        language.edit(this) { meanings[wordClass]?.remove(meaning) }
+
+    /*fun registerAttr(language: Language, attr: RelativeAttr, meaning: Meaning): Unit
+            = language.edit(this) { attrs[attr]?.add(meaning) }*/
 
     fun editTags(language: Language, editing: MutableSet<Keyword>.() -> Unit): Unit =
-        language.edit(name, id) { this.tags.editing() }
-    fun editAttrs(language: Language, editing: MutableMap<RelativeAttribute, MutableList<String>>.() -> Unit): Unit =
-        language.edit(name, id) { this.attrs.editing() }
+        language.edit(this) { tags.editing() }
+    fun editAttrs(language: Language, editing: MutableMap<RelativeAttr, MutableList<String>>.() -> Unit) {
+        language.edit(this) { attrs.editing() }
+        // TODO 상대방에게도 추가
+    }
     fun editMeanings(language: Language, editing: MutableMap<Keyword, MutableList<Meaning>>.() -> Unit): Unit =
-        language.edit(name, id) { this.meanings.editing() }
+        language.edit(this) { meanings.editing() }
 
     fun write(wordClassMapping: KeywordMap): String {
         return "$HEADER$id" +
                 "$ASSIGN$name" +
                 "$ASSIGN${tags.valuesJoined()}" +
                 "$DIVIDER" +
-                writeQueries(attrs, RelativeAttribute::symbol) { it } +
+                writeQueries(attrs, RelativeAttr::symbol) { it } +
                 "$DIVIDER" +
                 writeQueries(meanings, { it: Keyword -> it.code(wordClassMapping) ?: -1 }, Meaning::write)
     }
@@ -64,9 +65,9 @@ class Word(
 
         const val HEADER = '\u0001'
         const val DIVIDER = '\u0004'
-        const val QUERY = '\u0005' // ?a
-        const val ASSIGN = '\u0006' // =b
-        const val DESCRIBE = '\u0007' // ()
+        const val QUERY = '\u0005'
+        const val ASSIGN = '\u0006'
+        const val DESCRIBE = '\u0007'
 
         private fun fromString(string: String, classes: List<Keyword>, page: Int, loc: Int, size: Int): Word {
             val split = string.split(DIVIDER)
@@ -80,7 +81,7 @@ class Word(
 
             val attrs = readQueries(
                 split[1],
-                RelativeAttribute.Companion::fromString,
+                RelativeAttr.Companion::fromString,
                 { it },
             ).toMutableMap()
 
@@ -129,125 +130,5 @@ class Word(
                     key to value
                 }
                 .toMap()
-    }
-}
-
-data class WordEditing(
-    var newName: String? = null,
-    var tagsEditing: (MutableSet<Keyword>.() -> Unit)? = null,
-    var attrsEditing: (MutableMap<RelativeAttribute, MutableList<String>>.() -> Unit)? = null,
-    var meaningsEditing: (MutableMap<Keyword, MutableList<Meaning>>.() -> Unit)? = null,
-) {
-
-    companion object {
-        inline fun wordEditing(editing: WordEditing.() -> Unit): WordEditing =
-            WordEditing().apply(editing)
-    }
-}
-
-enum class RelativeAttribute(val symbol: Char) {
-    Synonym('s'),
-    Antonym('a'),
-    Origin('o'),
-    Derivative('d'),
-    Related('r');
-
-    val counter: RelativeAttribute by lazy {
-        when (this) {
-            Synonym -> Synonym
-            Antonym -> Antonym
-            Origin -> Derivative
-            Derivative -> Origin
-            Related -> Related
-        }
-    }
-
-    /*lateinit var counter: org.shinytomato.convox.data.RelativeAttribute
-        private set*/
-
-    companion object {
-        /*init {
-            Synonym.counter = Synonym
-            Antonym.counter = Antonym
-            Origin.counter = Derivative
-            Derivative.counter = Origin
-            Related.counter = Related
-        }*/
-
-        private val map = entries.associateBy(RelativeAttribute::symbol)
-
-        fun fromChar(value: Char): RelativeAttribute? {
-            return map[value]
-        }
-
-        fun fromString(value: String): RelativeAttribute? {
-            return map[value.first()]
-        }
-    }
-}
-
-
-class KeywordMap(list: MutableList<Keyword>) {
-
-    fun indexOf(keyword: Keyword): Int? = map[keyword]
-
-    private val map = list
-        .mapIndexed { i, x -> x to i }
-        .toMap()
-}
-
-
-data class Keyword(val text: String) {
-
-
-    //TODO: Keyword가 필요한지 생각해보자.
-    // 그냥 KeywordMap가지고 String으로 하면 되지 않나?
-
-    fun code(keywordMap: KeywordMap): Int? = keywordMap.indexOf(this)
-
-    companion object {
-        @JvmName("keywordFromListString")
-        fun from(list: List<String>, code: Int): Keyword? =
-            list.getOrNull(code)?.let { Keyword(it) }
-        @JvmName("keywordFromListKeyword")
-        fun from(list: List<Keyword>, code: Int): Keyword? =
-            list.getOrNull(code)
-    }
-}
-
-/*data class org.shinytomato.convox.data.Keyword(override val code: Int, val text: String): IKeyword {
-
-    override fun toString(): String = "org.shinytomato.convox.data.Keyword($code:$text)"
-
-    constructor(keywordMapping: List<String>, index: Int) : this(index, keywordMapping[index])
-
-    companion object {
-        fun fromList(x: List<String>): List<org.shinytomato.convox.data.Keyword> = List(x.size) { i -> org.shinytomato.convox.data.Keyword(x, i) }
-    }
-}*/
-
-
-sealed class Meaning(protected val meaning: String) {
-    abstract fun write(): String
-
-    class MeaningOnly(meaning: String) : Meaning(meaning) {
-        override fun toString(): String = "MeaningOnly(meaning=$meaning)"
-        override fun write(): String = "$ASSIGN$meaning"
-    }
-
-    class DescribedMeaning(meaning: String, private val description: String) : Meaning(meaning) {
-        override fun toString(): String = "DescribedMeaning(meaning=$meaning, description=$description)"
-        override fun write(): String = "$ASSIGN$meaning$DESCRIBE$description"
-    }
-
-    companion object {
-        fun fromString(input: String): Meaning =
-            when (val index = input.indexOf(DESCRIBE)) {
-                -1 -> MeaningOnly(input)
-                else -> DescribedMeaning(
-                    input.substring(0, index),
-                    input.substring(index + 1, input.length)
-                )
-            }
     }
 }

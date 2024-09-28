@@ -1,7 +1,6 @@
 package org.shinytomato.convox.data
 
-import org.shinytomato.convox.ConvoxApplication
-import org.shinytomato.convox.data.DataManager.stdDir
+import org.shinytomato.convox.data.ResourceManager.stdRooted
 import java.io.File
 
 fun String.splitAndTrim(delim: Char) = split(delim)
@@ -10,14 +9,6 @@ fun String.splitAndTrim(delim: Char) = split(delim)
 class Language(
     private val languageConfig: LanguageConfig,
     private val words: HashMap<String, WordValue>,
-    //TODO: 동음이의어를 처리하는 방식
-    // 1. 단어명으로 찾고 그 다음에 id로 찾는다 (동음이의어 관리자는 필요)
-    // 2. 단어명으로 찾고 그 다음에 별개로 존재하는 동음이의어 관리자에서 그 동음이의어 Set의 id(위첨자)를 가지고 한다.
-    //      -> 이 경우 동음이의어가 없었는데 나중에 생기는 경우엔?
-    //      -> 그리고 순서를 정한다 해도 각각의 요소들을 어떻게 구별하지? -> 불가능
-    // 3. 1번과 2번을 짬뽕해서 언어 자체 id와 동음이의어 용 id가 존재함.
-    //      -> 동음이의어 관리자가 각 단어를 구별할 수 있고,
-    //      -> 동음이의어 내에서 해당 단어를 찾을 때 id를 일일히 비교하지 않고 그냥 내부 id를 사용해 획득 가능
 ) {
     fun words() = words.toMap()
 
@@ -26,7 +17,6 @@ class Language(
 
     override fun toString(): String {
         val sb = StringBuilder("Language(\n\tconfig=")
-//        sb.appendLine(config.toString())
         sb.appendLine("\twords=[")
         for ((word, meanings) in words) {
             sb.appendLine("\t\t$word:$meanings")
@@ -69,17 +59,12 @@ class Language(
             edited.add(it)
         }
 
+    fun edit(word: Word, editing: Word.() -> Unit): Unit =
+        edit(word.name, word.id, editing)
+
     fun edit(name: String, id: Int, editing: Word.() -> Unit): Unit =
         getEdited(name, id)?.editing() ?: Unit
 
-    //TODO: 만약에
-    // editing에서 org.shinytomato.convox.data.Word 내부 property에 접근할 수 없으면, DSL 만들어서 간접적으로 객체 제공
-    // 예:
-    //  org.shinytomato.convox.data.WordEditing {
-    //      tags { tags ->
-    //          tags.add("a") // 이런 식
-    //      }
-    //  }
     private fun editInFile(word: Word) {
         //TODO:
         // size가 더 작아졌으면 그냥 앞당기고
@@ -97,13 +82,6 @@ class Language(
         removed.add(word)
         minusById(id)
     }
-    /*words.computeIfPresent(name) {
-        _, wordValue ->
-        val word = findById(id) ?: return@computeIfPresent wordValue
-        removeInFile(word)
-        removed.add(word)
-        wordValue.minusById(id)
-    }*/
 
 
     private fun removeInFile(word: Word) {
@@ -127,9 +105,8 @@ class Language(
                         .mapValues { (_, v) -> WordValue.from(v) })
             )
 
-        fun fromDir(langDir: File): Language = readFromDir(langDir, LanguageConfig.fromDir(langDir))
-
-        // HEADER id ASSIGN name ASSIGN pronunciation ASSIGN tags DIVIDER QUERY attr ASSIGN value DIVIDER meanings
+        fun fromDir(langDir: File): Language =
+            readFromDir(langDir, LanguageConfig.fromDir(langDir))
     }
 }
 
@@ -143,21 +120,18 @@ data class LanguageConfig(
 
         private fun attributesFromDir(langDir: File, x: String): MutableList<Keyword> {
             val file = langDir.resolve(x)
-                .run { if (isFile) this else stdDir.resolve(x) }
+                .run { if (isFile) this else x.stdRooted() }
 
-            if (!file.isFile) {
-                ConvoxApplication.warn("dZ1Q", "Failed to load standard ")
-                return mutableListOf()
-            }
-
-            return file
-                .bufferedReader()
-                .use { br ->
-                    br.lineSequence()
-                        .map(String::trim)
-                        .map(::Keyword)
-                        .toMutableList()
-                }
+            return if (file.isFile)
+                file
+                    .bufferedReader()
+                    .use { br ->
+                        br.lineSequence()
+                            .map(String::trim)
+                            .map(::Keyword)
+                            .toMutableList()
+                    }
+            else mutableListOf()
         }
 
         private fun classesFromDir(langDir: File): MutableList<Keyword> = attributesFromDir(langDir, CLASSES_FILE)
@@ -167,9 +141,6 @@ data class LanguageConfig(
             LanguageConfig(classesFromDir(langDir), tagsFromDir(langDir))
     }
 }
-
-//TODO: display용 Word따로 - 동음이의어번호, Language 정보 포함
-// -> Language는 Controller에서 보관, 동음이의어번호는 WordValue에서 내보낼 때 이름에 붙여서 보냄
 
 sealed class WordValue {
 

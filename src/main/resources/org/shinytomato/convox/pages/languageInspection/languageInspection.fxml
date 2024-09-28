@@ -11,7 +11,7 @@
       prefHeight="400.0" prefWidth="600.0">
     <fx:include fx:id="wordListView" source="../searchableList/searchableList.fxml"/>
     <VBox>
-        <Button>
+        <Button fx:id="editorialModeButton">
             <graphic>
                 <ImageView fx:id="editorialModeButtonImage" fitHeight="16" fitWidth="16">
                 </ImageView>

@@ -16,8 +16,7 @@ import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction
-import org.shinytomato.convox.ConvoxApplication.ApplicationState.stage
-import org.shinytomato.convox.data.DataManager
+import org.shinytomato.convox.data.ResourceManager
 import org.shinytomato.convox.impl.FXMLController
 import org.shinytomato.convox.impl.IGetSelected
 import org.shinytomato.convox.impl.Loadable
@@ -40,28 +39,28 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
             .otherwise(selectedItem))
 
         languageListViewController.run {
-            initInput(DataManager.loadLanguageList())
+            initInput(ResourceManager.loadLanguageSet().toList())
 
-            val binding = Bindings.size(list.items).multiply(40).add(1 + listPadding * 2)
-            list.minHeightProperty().bind(binding)
-            list.padding = Insets(listPadding, listPadding, listPadding, listPadding)
-            list.fixedCellSize = 40.0
-            list.prefWidth = 220.0
+            val binding = Bindings.size(list.items).multiply(LIST_CELL_HEIGHT).add(1 + LIST_PADDING * 2)
+            list.prefHeightProperty().bind(binding)
+            list.padding = Insets(LIST_PADDING, LIST_PADDING, LIST_PADDING, LIST_PADDING)
+            list.fixedCellSize = LIST_CELL_HEIGHT
+            list.prefWidth = LIST_WIDTH
         }
 
         languageListViewController.getSelected = this
     }
 
     private fun openSelected() {
-        ConvoxAction.languageInspection(if (selectedItem.isEmpty.get()) return else selectedItem.get())
+        ConvoxAction.languageInspection(stage, if (selectedItem.isEmpty.get()) return else selectedItem.get())
     }
 
     override fun whenLoad(stage: Stage, scene: Scene) {
         stage.run {
             title = "Convox에 오신 것을 환영합니다"
             icons.add(Image("org/shinytomato/convox/image/application-icon.png"))
-            width = 500.0
-            height = 400.0
+            width = STAGE_WIDTH
+            height = STAGE_HEIGHT
             isResizable = false
         }
 
@@ -89,6 +88,11 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
     fun openButton(): Unit = openSelected()
 
     companion object : Loadable<MainController>("main") {
-        val listPadding = 10.0
+        const val STAGE_HEIGHT = 400.0
+        const val STAGE_WIDTH = 500.0
+        const val LIST_WIDTH = 220.0
+
+        private const val LIST_PADDING = 10.0
+        private const val LIST_CELL_HEIGHT = 40.0
     }
 }
