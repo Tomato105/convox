@@ -1,7 +1,5 @@
 package org.shinytomato.convox.data
 
-
-
 enum class RelativeAttr(val symbol: Char) {
     Synonym('s'),
     Antonym('a'),

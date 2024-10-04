@@ -10,7 +10,6 @@ import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
-import org.shinytomato.convox.data.ResourceManager
 import org.shinytomato.convox.data.ResourceManager.resolveResourcePath
 import org.shinytomato.convox.data.Language
 import org.shinytomato.convox.impl.FXMLController
@@ -38,7 +37,7 @@ class LanguageInspectionController : FXMLController() {
         this.languageName = languageName
 
         wordListViewController.run {
-            initInput(Language.fromDir(ResourceManager.dictDir.resolve(languageName)).words().keys.toList())
+            initInput(Language.fromDir(languageName).words().keys.toList())
 
             list.prefHeightProperty().bind(Bindings.size(list.items).multiply(CELL_SIZE).add(1 + LIST_PADDING * 2))
             list.padding = Insets(LIST_PADDING, LIST_PADDING, LIST_PADDING, LIST_PADDING)

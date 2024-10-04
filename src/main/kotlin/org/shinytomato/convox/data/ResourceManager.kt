@@ -7,6 +7,7 @@ object ResourceManager {
     const val DATA_ROOT = "data/"
     const val DICT_ROOT = "${DATA_ROOT}dict/"
     const val STD_ROOT = "${DATA_ROOT}std/"
+    const val INDEX_DAT = "index.dat"
 
     val dataDir = File("data")
     val dictDir = dataDir.resolve("dict")
@@ -14,20 +15,22 @@ object ResourceManager {
 
 
     fun loadLanguageSet(): Set<String> =
-        File("data/index.dat").bufferedReader().use { br ->
-            br.lines()
-                ?.map { it.trim() }
-                ?.filter { it.dictRooted().isDirectory }
-                ?.toList()
+        INDEX_DAT.dataRooted().bufferedReader().use { br ->
+            br.lineSequence()
+                .map { it.trim() }
+                .filter { it.dictRooted().isDirectory }
+                .toList()
         }
-            ?.toMutableSet()
-            ?.plus(dictDir.listFiles().filter(File::isDirectory).map(File::getName)) ?: mutableSetOf()
+            .toMutableSet()
+            .plus(dictDir.listFiles().filter(File::isDirectory).map(File::getName))
 
-
+    fun String.dataRooted(): File = dataDir.resolve(this)
+    fun String.dataRootedString(): String = "$DATA_ROOT/$this"
     fun String.dictRooted(): File = dictDir.resolve(this)
     fun String.dictRootedString(): String = "$DICT_ROOT/$this"
     fun String.stdRooted(): File = stdDir.resolve(this)
     fun String.stdRootedString(): String = "$STD_ROOT/$this"
+
     fun Any.resolveResource(string: String): URL? = this.javaClass.getResource(string)
     fun Any.resolveResourcePath(string: String): String? = this.resolveResource(string)?.toString()
 }

@@ -7,12 +7,7 @@
 <HBox alignment="TOP_CENTER" prefHeight="364.0" prefWidth="500.0" stylesheets="@../root.css, @main.css"
       xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.shinytomato.convox.pages.MainController">
-    <StackPane>
-        <padding>
-            <Insets top="10"/>
-        </padding>
         <fx:include fx:id="languageListView" source="../searchableList/searchableList.fxml"/>
-    </StackPane>
     <VBox alignment="BASELINE_CENTER" maxHeight="340.0" prefWidth="200.0">
         <Label id="selected" fx:id="selected">
             <VBox.margin>
@@ -25,25 +20,13 @@
                 <Button fx:id="newButton" mnemonicParsing="false" onMousePressed="#newButton" text="새로 만들기"/>
                 <Button fx:id="openButton" disable="true" mnemonicParsing="false" onMousePressed="#openButton"
                         text="열기"/>
-                <VBox.margin>
-                    <Insets/>
-                </VBox.margin>
-                <padding>
-                    <Insets bottom="10.0"/>
-                </padding>
             </HBox>
             <Label id="info" disable="true" maxHeight="40.0" maxWidth="200.0" minHeight="40.0" prefHeight="40.0"
                    text="ⓘ 언어 이름을 더블클릭하거나 &#10;ENTER 키를 눌러 열 수도 있습니다.">
-                <VBox.margin>
-                    <Insets/>
-                </VBox.margin>
                 <padding>
                     <Insets left="20.0"/>
                 </padding>
             </Label>
-            <VBox.margin>
-                <Insets/>
-            </VBox.margin>
 
         </VBox>
         <HBox.margin>

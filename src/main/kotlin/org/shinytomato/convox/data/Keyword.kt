@@ -1,25 +1,13 @@
 package org.shinytomato.convox.data
 
 
-data class Keyword(val text: String) {
+class Keyword(val text: String) {
 
-    fun code(keywordMap: KeywordMap): Int? = keywordMap.indexOf(this)
+    fun code(mapping: WritingOrderingMap<Keyword>): Int? = mapping.indexOf(this)
+    fun codeHexDec(mapping: WritingOrderingMap<Keyword>): String? = code(mapping)?.toString(16)
 
     companion object {
-        @JvmName("keywordFromListString")
-        fun from(list: List<String>, code: Int): Keyword? =
-            list.getOrNull(code)?.let { Keyword(it) }
-        @JvmName("keywordFromListKeyword")
-        fun from(list: List<Keyword>, code: Int): Keyword? =
-            list.getOrNull(code)
+        fun from(list: OrderingMap<Keyword>, code: Int): Keyword?
+            = list[code]
     }
-
-}
-class KeywordMap(list: MutableList<Keyword>) {
-
-    fun indexOf(keyword: Keyword): Int? = map[keyword]
-
-    private val map = list
-        .mapIndexed { i, x -> x to i }
-        .toMap()
 }

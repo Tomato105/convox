@@ -42,7 +42,7 @@ class SearchableListView(
             } else {
                 origin.mapNotNull {
                     val index = it.indexOf(text)
-                    if (index == -1) return@mapNotNull null
+                    if (index == -1) return@mapNotNull null // 문자 포함 안 할 시 제외
                     val point = index + text.length
                     TextFlow(
                         Text(it.substring(0..<index)),
