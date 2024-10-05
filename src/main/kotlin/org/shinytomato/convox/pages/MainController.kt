@@ -3,7 +3,6 @@ package org.shinytomato.convox.pages
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
-import javafx.geometry.Insets
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
@@ -43,9 +42,8 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
 
             val binding = Bindings.size(list.items).multiply(LIST_CELL_HEIGHT).add(1 + LIST_PADDING * 2)
             list.prefHeightProperty().bind(binding)
-            list.padding = Insets(LIST_PADDING, LIST_PADDING, LIST_PADDING, LIST_PADDING)
+            listPadding(LIST_PADDING)
             list.fixedCellSize = LIST_CELL_HEIGHT
-            list.prefWidth = LIST_WIDTH
         }
 
         languageListViewController.getSelected = this
@@ -90,7 +88,6 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
     companion object : Loadable<MainController>("main") {
         const val STAGE_HEIGHT = 400.0
         const val STAGE_WIDTH = 500.0
-        const val LIST_WIDTH = 220.0
 
         private const val LIST_PADDING = 10.0
         private const val LIST_CELL_HEIGHT = 40.0

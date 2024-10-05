@@ -8,14 +8,18 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.shinytomato.convox.pages.LanguageInspectionController"
       stylesheets="@../root.css, @languageInspection.css"
-      prefHeight="400.0" prefWidth="600.0">
+      prefHeight="500.0" prefWidth="600.0" spacing="25.0"
+      alignment="TOP_CENTER">
+
     <fx:include fx:id="wordListView" source="../searchableList/searchableList.fxml"/>
-    <VBox>
-        <Button fx:id="editorialModeButton">
-            <graphic>
-                <ImageView fx:id="editorialModeButtonImage" fitHeight="16" fitWidth="16">
-                </ImageView>
-            </graphic>
-        </Button>
+
+    <VBox prefWidth="300" alignment="TOP_CENTER">
+        <HBox alignment="CENTER_RIGHT">
+            <Button fx:id="editorialModeButton">
+                <graphic>
+                    <ImageView fx:id="editorialModeButtonImage" fitHeight="16" fitWidth="16"/>
+                </graphic>
+            </Button>
+        </HBox>
     </VBox>
 </HBox>

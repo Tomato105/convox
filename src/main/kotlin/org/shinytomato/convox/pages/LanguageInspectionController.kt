@@ -3,7 +3,6 @@ package org.shinytomato.convox.pages
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.fxml.FXML
-import javafx.geometry.Insets
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
@@ -40,7 +39,7 @@ class LanguageInspectionController : FXMLController() {
             initInput(Language.fromDir(languageName).words().keys.toList())
 
             list.prefHeightProperty().bind(Bindings.size(list.items).multiply(CELL_SIZE).add(1 + LIST_PADDING * 2))
-            list.padding = Insets(LIST_PADDING, LIST_PADDING, LIST_PADDING, LIST_PADDING)
+            listPadding(LIST_PADDING)
             list.fixedCellSize = CELL_SIZE
         }
     }
@@ -48,16 +47,16 @@ class LanguageInspectionController : FXMLController() {
     override fun whenLoad(stage: Stage, scene: Scene) {
         stage.run {
             title = languageName
-            width = STAGE_WIDTH
             height = STAGE_HEIGHT
+            width = STAGE_WIDTH
             isResizable = true
         }
     }
 
     companion object : Loadable<LanguageInspectionController>("languageInspection") {
         const val LIST_PADDING = 10.0
-        const val STAGE_HEIGHT = 400.0
-        const val STAGE_WIDTH = 500.0
+        const val STAGE_HEIGHT = 500.0
+        const val STAGE_WIDTH = 600.0
         const val CELL_SIZE = 25.0
 
         private val isEditing = SimpleBooleanProperty(false)

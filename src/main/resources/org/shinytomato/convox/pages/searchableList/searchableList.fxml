@@ -5,16 +5,16 @@
 <?import javafx.scene.layout.*?>
 
 <VBox stylesheets="@searchableList.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.shinytomato.convox.impl.SearchableListController">
-    <TextField id="search" fx:id="search" promptText="검색...">
-        <VBox.margin>
-            <Insets bottom="10.0"/>
-        </VBox.margin>
-    </TextField>
+      fx:controller="org.shinytomato.convox.impl.SearchableListController"
+      prefWidth="250.0" maxWidth="250.0" spacing="10.0">
+
+    <padding>
+        <Insets topRightBottomLeft="10.0"/>
+    </padding>
+
+    <TextField id="search" fx:id="search" promptText="검색..."/>
+
     <ScrollPane fx:id="container" hbarPolicy="NEVER" vbarPolicy="NEVER">
-        <VBox.margin>
-            <Insets bottom="10.0"/>
-        </VBox.margin>
-        <ListView fx:id="list" fixedCellSize="30" onMousePressed="#whenSelected" prefWidth="250.0"/>
+        <ListView fx:id="list" fixedCellSize="30" onMousePressed="#whenSelected"/>
     </ScrollPane>
 </VBox>

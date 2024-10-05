@@ -4,10 +4,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox alignment="TOP_CENTER" prefHeight="364.0" prefWidth="500.0" stylesheets="@../root.css, @main.css"
+<HBox stylesheets="@../root.css, @main.css"
       xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.shinytomato.convox.pages.MainController">
-        <fx:include fx:id="languageListView" source="../searchableList/searchableList.fxml"/>
+      fx:controller="org.shinytomato.convox.pages.MainController"
+      prefHeight="364.0" prefWidth="500.0" spacing="10.0">
+
+    <fx:include fx:id="languageListView" source="../searchableList/searchableList.fxml"/>
+
     <VBox alignment="BASELINE_CENTER" maxHeight="340.0" prefWidth="200.0">
         <Label id="selected" fx:id="selected">
             <VBox.margin>
@@ -22,18 +25,11 @@
                         text="열기"/>
             </HBox>
             <Label id="info" disable="true" maxHeight="40.0" maxWidth="200.0" minHeight="40.0" prefHeight="40.0"
-                   text="ⓘ 언어 이름을 더블클릭하거나 &#10;ENTER 키를 눌러 열 수도 있습니다.">
+                   text="ⓘ 언어 이름을 더블클릭하거나&#10;ENTER 키를 눌러 열 수도 있습니다.">
                 <padding>
                     <Insets left="20.0"/>
                 </padding>
             </Label>
-
         </VBox>
-        <HBox.margin>
-            <Insets left="20.0"/>
-        </HBox.margin>
-        <padding>
-            <Insets bottom="10.0"/>
-        </padding>
     </VBox>
 </HBox>

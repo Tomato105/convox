@@ -1,15 +1,16 @@
 #search {
-    -fx-background-color: #ffffff;
+    -fx-background-color: white;
+    -fx-background-radius: 10;
 }
 
 .scroll-pane {
-   -fx-background-color: transparent;
-   -fx-background-width: 0px;
-   -fx-background-radius: 10;
+    -fx-background-color: transparent;
+    -fx-background-width: 0px;
+    -fx-background-radius: 10;
 }
 
 .list-view {
-    -fx-background-color: #ffffff;
+    -fx-background-color: white;
     -fx-background-insets: 0;
     -fx-background-radius: 10;
 }
