@@ -1,4 +1,5 @@
-import org.shinytomato.convox.data.Word
+package org.shinytomato.convox.data.word
+
 
 sealed class WordRef {
 

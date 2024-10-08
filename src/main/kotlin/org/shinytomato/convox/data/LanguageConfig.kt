@@ -1,9 +1,14 @@
 package org.shinytomato.convox.data
 
 import org.shinytomato.convox.data.Language.Companion.WORD_PAGE_EXTENSION
-import org.shinytomato.convox.data.LanguageConfig.Companion.WORD_DIR
+import org.shinytomato.convox.data.LanguageConfig.Companion.WORD_DIR_NAME
 import org.shinytomato.convox.data.ResourceManager.dictRooted
 import org.shinytomato.convox.data.ResourceManager.stdRooted
+import org.shinytomato.convox.toHashMap
+import org.shinytomato.convox.data.word.Keyword
+import org.shinytomato.convox.data.word.OrderingMap
+import org.shinytomato.convox.data.word.Word
+import org.shinytomato.convox.data.word.WritingOrderingMap
 import java.io.File
 
 class LanguageConfig(
@@ -14,23 +19,21 @@ class LanguageConfig(
 
     fun getDir(): File = name.dictRooted()
     fun resolve(loc: String): File = name.dictRooted().resolve(loc)
-    fun resolvePage(i: Int): File = resolve(WORD_DIR).resolve("${i.toString(16)}$WORD_PAGE_EXTENSION")
+    fun resolvePage(i: Int): File = resolve(WORD_DIR_NAME).resolve("${i.toString(16)}$WORD_PAGE_EXTENSION")
 
     fun toWriting(words: List<Word>): WritingConfig =
         WritingConfig(name, classes.toWriting(), tags.toWriting(), words)
 
-    fun wordsFromDir(langName: String): MutableMap<String, MutableList<Word>> =
-        wordsFromDir(langName.dictRooted())
-
-    fun wordsFromDir(langDir: File): MutableMap<String, MutableList<Word>> =
-        Word.fromDir(langDir.resolve(WORD_DIR), this)
+    fun wordsFromDir(langDir: File): HashMap<String, MutableList<Word>> =
+        Word.Companion.fromDir(langDir.resolve(WORD_DIR_NAME), this)
             .groupBy { it.name }
-            .mapValues { (_, v) -> v.toMutableList() }.toMutableMap()
+            .mapValues { (_, v) -> v.toMutableList() }
+            .toHashMap()
 
     companion object {
-        private const val CLASSES_FILE = "classes"
-        private const val TAGS_FILE = "tags"
-        const val WORD_DIR = "wrd"
+        private const val CLASSES_FILE_NAME = "classes"
+        private const val TAGS_FILE_NAME = "tags"
+        const val WORD_DIR_NAME = "wrd"
 
         private fun attributesFromDir(langDir: File, x: String): OrderingMap<Keyword> {
             val file = langDir.resolve(x)
@@ -44,19 +47,18 @@ class LanguageConfig(
                             val i = s.indexOf(':')
                             (s.substring(0..<i).toInt(16)) to Keyword(s.substring(i..<s.length))
                         }
-                        .toMutableMap()
+                        .toHashMap()
                 })
         }
 
         private fun classesFromDir(langDir: File): OrderingMap<Keyword> =
-            attributesFromDir(langDir, CLASSES_FILE)
+            attributesFromDir(langDir, CLASSES_FILE_NAME)
 
         private fun tagsFromDir(langDir: File): OrderingMap<Keyword> =
-            attributesFromDir(langDir, TAGS_FILE)
+            attributesFromDir(langDir, TAGS_FILE_NAME)
 
-        fun fromDir(langName: String): LanguageConfig {
-            val langDir = langName.dictRooted()
-            return LanguageConfig(langName, classesFromDir(langDir), tagsFromDir(langDir))
+        fun fromDir(langDir: File): LanguageConfig {
+            return LanguageConfig(langDir.name, classesFromDir(langDir), tagsFromDir(langDir))
         }
     }
 }
@@ -70,6 +72,6 @@ data class WritingConfig(
 
     fun getDir(): File = name.dictRooted()
     fun resolve(loc: String): File = name.dictRooted().resolve(loc)
-    fun resolvePage(i: Int): File = resolve(WORD_DIR).resolve("${i.toString(16)}$WORD_PAGE_EXTENSION")
+    fun resolvePage(i: Int): File = resolve(WORD_DIR_NAME).resolve("${i.toString(16)}$WORD_PAGE_EXTENSION")
 
 }

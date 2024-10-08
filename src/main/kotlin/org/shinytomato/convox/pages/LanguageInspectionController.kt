@@ -6,6 +6,7 @@ import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
+import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
@@ -13,14 +14,18 @@ import org.shinytomato.convox.data.ResourceManager.resolveResourcePath
 import org.shinytomato.convox.data.Language
 import org.shinytomato.convox.impl.FXMLController
 import org.shinytomato.convox.impl.Loadable
-import org.shinytomato.convox.impl.SearchableListController
+import org.shinytomato.convox.impl.searchableList.SearchableListController
+import org.shinytomato.convox.impl.searchableList.simpleEngine
+import java.io.File
 
 class LanguageInspectionController : FXMLController() {
 
     @FXML lateinit var editorialModeButton: Button
     @FXML lateinit var editorialModeButtonImage: ImageView
     @FXML lateinit var wordListView: Parent
-    @FXML lateinit var wordListViewController: SearchableListController
+    @FXML lateinit var wordListViewController: SearchableListController<String>
+    @FXML lateinit var selected: Label
+
     private lateinit var languageName: String
 
     @FXML
@@ -32,15 +37,15 @@ class LanguageInspectionController : FXMLController() {
         }
     }
 
-    fun initInput(languageName: String) {
-        this.languageName = languageName
+    fun initOrigin(languageDir: File) {
+        this.languageName = languageDir.name
 
         wordListViewController.run {
-            initInput(Language.fromDir(languageName).words().keys.toList())
+            initOrigin(simpleEngine(Language.fromDir(languageDir).words().keys, { it }))
 
-            list.prefHeightProperty().bind(Bindings.size(list.items).multiply(CELL_SIZE).add(1 + LIST_PADDING * 2))
+            listview.prefHeightProperty().bind(Bindings.size(listview.items).multiply(LIST_CELL_SIZE).add(1 + LIST_PADDING * 2))
             listPadding(LIST_PADDING)
-            list.fixedCellSize = CELL_SIZE
+            listview.fixedCellSize = LIST_CELL_SIZE
         }
     }
 
@@ -57,7 +62,7 @@ class LanguageInspectionController : FXMLController() {
         const val LIST_PADDING = 10.0
         const val STAGE_HEIGHT = 500.0
         const val STAGE_WIDTH = 600.0
-        const val CELL_SIZE = 25.0
+        const val LIST_CELL_SIZE = 25.0
 
         private val isEditing = SimpleBooleanProperty(false)
         private val viewingImage = Image(resolveResourcePath("../image/eye.png"))

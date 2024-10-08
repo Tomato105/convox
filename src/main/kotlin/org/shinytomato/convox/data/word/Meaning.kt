@@ -1,7 +1,8 @@
-package org.shinytomato.convox.data
+package org.shinytomato.convox.data.word
 
-import org.shinytomato.convox.data.Word.Companion.ASSIGN
-import org.shinytomato.convox.data.Word.Companion.DESCRIBE
+import org.shinytomato.convox.data.word.Word.Companion.ASSIGN
+import org.shinytomato.convox.data.word.Word.Companion.DESCRIBE
+
 
 sealed class Meaning(protected val meaning: String) {
     abstract fun write(): String

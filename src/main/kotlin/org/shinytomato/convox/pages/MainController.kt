@@ -1,7 +1,7 @@
 package org.shinytomato.convox.pages
 
 import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -11,46 +11,46 @@ import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
-import javafx.scene.text.Text
-import javafx.scene.text.TextFlow
 import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction
 import org.shinytomato.convox.data.ResourceManager
 import org.shinytomato.convox.impl.FXMLController
 import org.shinytomato.convox.impl.IGetSelected
 import org.shinytomato.convox.impl.Loadable
-import org.shinytomato.convox.impl.SearchableListController
+import org.shinytomato.convox.impl.searchableList.SearchableListController
+import org.shinytomato.convox.impl.searchableList.simpleEngine
+import java.io.File
 
-class MainController : FXMLController(), IGetSelected<TextFlow> {
+class MainController : FXMLController(), IGetSelected<File> {
 
     @FXML lateinit var selected: Label
     @FXML lateinit var newButton: Button
     @FXML lateinit var openButton: Button
     @FXML lateinit var languageListView: Parent
-    @FXML lateinit var languageListViewController: SearchableListController
+    @FXML lateinit var languageListViewController: SearchableListController<File>
 
-    private val selectedItem: SimpleStringProperty = SimpleStringProperty()
+    private val selectedItem: SimpleObjectProperty<File> = SimpleObjectProperty(null)
 
     @FXML
     private fun initialize() {
-        selected.textProperty().bind(Bindings.`when`(selectedItem.isEmpty)
+        selected.textProperty().bind(Bindings.`when`(selectedItem.isNull)
             .then("언어를 선택하여 주십시오")
-            .otherwise(selectedItem))
+            .otherwise(selectedItem.name))
 
         languageListViewController.run {
-            initInput(ResourceManager.loadLanguageSet().toList())
+            initOrigin(simpleEngine(ResourceManager.languageDirList()) { it.name })
 
-            val binding = Bindings.size(list.items).multiply(LIST_CELL_HEIGHT).add(1 + LIST_PADDING * 2)
-            list.prefHeightProperty().bind(binding)
+            val binding = Bindings.size(listview.items).multiply(LIST_CELL_SIZE).add(1 + LIST_PADDING * 2)
+            listview.prefHeightProperty().bind(binding)
             listPadding(LIST_PADDING)
-            list.fixedCellSize = LIST_CELL_HEIGHT
+            listview.fixedCellSize = LIST_CELL_SIZE
         }
 
         languageListViewController.getSelected = this
     }
 
     private fun openSelected() {
-        ConvoxAction.languageInspection(stage, if (selectedItem.isEmpty.get()) return else selectedItem.get())
+        ConvoxAction.languageInspection(stage, if (selectedItem.isNull.get()) return else selectedItem.get())
     }
 
     override fun whenLoad(stage: Stage, scene: Scene) {
@@ -68,10 +68,10 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
         }
     }
 
-    override fun whenSelected(selected: TextFlow, clickEvent: MouseEvent) {
+    override fun whenSelected(selected: File, clickEvent: MouseEvent) {
         when (clickEvent.clickCount) {
             1 -> {
-                selectedItem.set(selected.children.joinToString(separator = "") { (it as Text).text })
+                selectedItem.set(selected)
                 openButton.isDisable = false
             }
 
@@ -90,6 +90,6 @@ class MainController : FXMLController(), IGetSelected<TextFlow> {
         const val STAGE_WIDTH = 500.0
 
         private const val LIST_PADDING = 10.0
-        private const val LIST_CELL_HEIGHT = 40.0
+        private const val LIST_CELL_SIZE = 40.0
     }
 }

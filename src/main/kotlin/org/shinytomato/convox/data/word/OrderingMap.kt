@@ -1,9 +1,7 @@
-package org.shinytomato.convox.data
-
-import kotlin.collections.MutableMap
+package org.shinytomato.convox.data.word
 
 
-class OrderingMap<T>(private val mapping: MutableMap<Int, T>) {
+class OrderingMap<T>(private val mapping: HashMap<Int, T>) {
     operator fun get(index: Int): T? = mapping[index]
     fun toWriting() = WritingOrderingMap(mapping.entries.associate { (i, x) -> x to i })
 }

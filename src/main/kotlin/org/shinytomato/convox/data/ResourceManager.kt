@@ -13,16 +13,15 @@ object ResourceManager {
     val dictDir = dataDir.resolve("dict")
     val stdDir = dataDir.resolve("std")
 
-
-    fun loadLanguageSet(): Set<String> =
+    fun languageDirList(): List<File> =
         INDEX_DAT.dataRooted().bufferedReader().use { br ->
             br.lineSequence()
-                .map { it.trim() }
-                .filter { it.dictRooted().isDirectory }
-                .toList()
+                .map(String::trim)
+                .toSet()
         }
-            .toMutableSet()
-            .plus(dictDir.listFiles().filter(File::isDirectory).map(File::getName))
+            .plus(dictDir.list())
+            .map { it.dictRooted() }
+            .filter(File::isDirectory)
 
     fun String.dataRooted(): File = dataDir.resolve(this)
     fun String.dataRootedString(): String = "$DATA_ROOT/$this"

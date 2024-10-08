@@ -1,15 +1,17 @@
 package org.shinytomato.convox.data
 
+import org.shinytomato.convox.data.word.Word
 import java.io.File
 import java.io.RandomAccessFile
 import kotlin.collections.chunked
+
 
 fun String.splitAndTrim(delim: Char) = split(delim)
     .run { if (first().isEmpty()) subList(1, this.size) else this }
 
 class Language(
     private val languageConfig: LanguageConfig,
-    private val words: MutableMap<String, MutableList<Word>>,
+    private val words: HashMap<String, MutableList<Word>>,
 ) {
 
     fun words() = words.toMap()
@@ -61,14 +63,14 @@ class Language(
         const val WORD_PAGE_EXTENSION = ".convox"
         private const val WORDS_A_PAGE = 20
 
-        private fun readFromDir(langName: String, languageConfig: LanguageConfig): Language =
+        private fun readFromDir(languageDir: File, languageConfig: LanguageConfig): Language =
             Language(
                 languageConfig,
-                languageConfig.wordsFromDir(langName)
+                languageConfig.wordsFromDir(languageDir)
             )
 
-        fun fromDir(langName: String): Language =
-            readFromDir(langName, LanguageConfig.fromDir(langName))
+        fun fromDir(languageDir: File): Language =
+            readFromDir(languageDir, LanguageConfig.fromDir(languageDir))
 
         private fun saveToString(words: List<Word>, writingConfig: WritingConfig) =
             words.joinToString("") { it.write(writingConfig) }

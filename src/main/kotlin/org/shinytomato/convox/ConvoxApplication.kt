@@ -6,6 +6,7 @@ import javafx.stage.Stage
 import org.shinytomato.convox.ConvoxAction.mainPage
 import org.shinytomato.convox.pages.LanguageInspectionController
 import org.shinytomato.convox.pages.MainController
+import java.io.File
 
 class ConvoxApplication : Application() {
 
@@ -20,15 +21,17 @@ object ConvoxAction {
         MainController.loadFXML(stage)
     }
 
-    fun languageInspection(stage: Stage, selected: String) {
+    fun languageInspection(stage: Stage, selected: File) {
         stage.hide()
         println("selected: $selected")
         LanguageInspectionController.loadFXML(stage) { _: Stage, _: Scene ->
-            initInput(selected)
+            initOrigin(selected)
         }
         stage.show()
     }
 }
+
+fun <K, V> Map<K, V>.toHashMap() = HashMap(this)
 
 fun main() {
     Application.launch(ConvoxApplication::class.java)

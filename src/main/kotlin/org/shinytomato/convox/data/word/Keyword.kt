@@ -1,4 +1,4 @@
-package org.shinytomato.convox.data
+package org.shinytomato.convox.data.word
 
 
 class Keyword(val text: String) {

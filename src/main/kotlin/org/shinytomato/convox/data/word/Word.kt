@@ -1,20 +1,23 @@
-package org.shinytomato.convox.data
+package org.shinytomato.convox.data.word
 
+import org.shinytomato.convox.data.Language
+import org.shinytomato.convox.data.LanguageConfig
+import org.shinytomato.convox.data.WritingConfig
+import org.shinytomato.convox.data.splitAndTrim
+import org.shinytomato.convox.toHashMap
 import java.io.File
 
 
 class Word(
     val id: Int,
-    name: String,
-    private val tags: MutableSet<Keyword>,
-    private val attrs: MutableMap<RelativeAttr, MutableList<WordRef>>,
-    private val meanings: MutableMap<Keyword, MutableList<Meaning>>,
+    val name: String,
+    private val tags: HashSet<Keyword>,
+    private val attrs: HashMap<RelativeAttr, MutableList<WordRef>>,
+    private val meanings: HashMap<Keyword, MutableList<Meaning>>,
     val page: Int,
     val loc: Int,
-    val size: Int,
+//    val size: Int,
 ) {
-    var name = name
-        private set
 
     private fun idHexDec(): String = id.toString(16)
 
@@ -35,12 +38,12 @@ class Word(
     fun registerAttr(language: Language, attr: RelativeAttr, word: WordRef): Unit =
         language.edit(this) { attrs[attr]?.add(word) }
 
-    fun editTags(language: Language, editing: MutableSet<Keyword>.() -> Unit): Unit =
+    fun editTags(language: Language, editing: HashSet<Keyword>.() -> Unit): Unit =
         language.edit(this) { tags.editing() }
-    fun editAttrs(language: Language, editing: MutableMap<RelativeAttr, MutableList<WordRef>>.() -> Unit) {
+    fun editAttrs(language: Language, editing: HashMap<RelativeAttr, MutableList<WordRef>>.() -> Unit) {
         language.edit(this) { attrs.editing() }
     }
-    fun editMeanings(language: Language, editing: MutableMap<Keyword, MutableList<Meaning>>.() -> Unit): Unit =
+    fun editMeanings(language: Language, editing: HashMap<Keyword, MutableList<Meaning>>.() -> Unit): Unit =
         language.edit(this) { meanings.editing() }
 
     fun write(config: WritingConfig): String {
@@ -63,18 +66,18 @@ class Word(
         kMapper: (T) -> Any?,
         vMapper: (F) -> String?,
     ): String =
-        x.map/*NotNull*/ { (k, v) ->
-            "$QUERY${kMapper(k)!!/* ?: return@mapNotNull null*/}" +
+        x.map { (k, v) ->
+            "$QUERY${kMapper(k)!!}" +
                     "$ASSIGN${v.mapNotNull(vMapper).valuesJoined()}"
         }
             .joinToString("")
 
     fun validateAttr(wordMap: HashMap<Int, Word>) {
         attrs.mapValues { (attr, refs) ->
-            attrs[attr] = refs.map/*NotNull*/ { wordRef ->
+            attrs[attr] = refs.map { wordRef ->
                 wordRef.validateRef(wordMap)!!
             }.toMutableList()
-        }.toMutableMap()
+        }
     }
 
     companion object {
@@ -99,22 +102,22 @@ class Word(
             val id = header[0].toInt(16)
             val name = header[1]
             val tags = header.subList(2, header.size)
-                .map/*NotNull*/ { languageConfig.tags[it.toInt(16)]!! }
-                .toMutableSet()
+                .map { languageConfig.tags[it.toInt(16)]!! }
+                .toHashSet()
 
             val attrs = readQueries(
                 split[1],
                 RelativeAttr.Companion::fromString,
                 { WordRef.IdRef(it.toInt(16)) as WordRef },
-            ).toMutableMap()
+            ).toHashMap()
 
             val meanings = readQueries(
                 split[2],
                 { languageConfig.classes[it.toInt(16)] },
                 Meaning.Companion::fromString
-            ).toMutableMap()
+            ).toHashMap()
 
-            return Word(id, name, tags, attrs, meanings, page, loc, size)
+            return Word(id, name, tags, attrs, meanings, page, loc, /*size*/)
                 .also { wordMap[id] = it }
         }
 
@@ -160,7 +163,6 @@ class Word(
                         .mapNotNull(vMapper)
                         .toMutableList()
                     key to value
-                }
-                .toMap()
+                }.toMap()
     }
 }
