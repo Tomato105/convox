@@ -1,6 +1,7 @@
 package org.shinytomato.convox.impl.searchableList
 
 import javafx.beans.value.ChangeListener
+import javafx.scene.Node
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
@@ -17,11 +18,6 @@ class SearchableListView<T>(
     private val listview: ListView<Displayable<T>>,
     private val queryField: TextField,
 ) {
-
-    //TODO: listener 말고 binding 못 쓰나? listview.itemsProperty().bind(...) 식으로
-    // 그리고 다양성도 필요함.
-    // graphic = 내부도 engine에서 해줘야. (최소한 지정 가능하게)
-    // decorate도 지정할 수 있어야.
     private lateinit var listener: ChangeListener<String>
     private lateinit var engine: ListViewEngine<T>
 
@@ -32,8 +28,7 @@ class SearchableListView<T>(
                     super.updateItem(item, empty)
                     graphic =
                         if (empty || item == null) null
-                        else if (queryField.text.isEmpty()) Text(item.label)
-                        else decorate(item.label, item.label.indexOf(queryField.text), queryField.length)
+                        else engine.toGraphic(item, queryField.text)
                 }
             }
         }
@@ -44,7 +39,7 @@ class SearchableListView<T>(
     fun init(engine: ListViewEngine<T>) {
         this.engine = engine
 
-        update("")
+        update(queryField.text)
 
         queryField.textProperty().let { textProp ->
             if (::listener.isInitialized)
@@ -63,11 +58,37 @@ class SearchableListView<T>(
         ChangeListener { _, _, query ->
             update(query)
         }
+}
+
+abstract class ListViewEngine<T>(source: Collection<T>) {
+
+    private val _source = toDisplayableList(source).toMutableList()
+
+    val source
+        get() = _source as List<Displayable<T>>
+
+    // String 값을 산출하는 함수
+    abstract fun toLabel(item: T): String
+
+    // 화면에 표시되는 Node
+    open fun toGraphic(item: Displayable<T>, query: String): Node =
+        if (query.isEmpty()) Text(item.label)
+        else partialBold(item.label, item.label.indexOf(query), query.length)
+
+    // 항목을 추가할 때 필요
+    private fun toDisplayable(item: T): Displayable<T> = object : Displayable<T> {
+        override val label: String
+            get() = toLabel(item)
+        override val item: T = item
+    }
+    private fun toDisplayableList(item: Collection<T>): List<Displayable<T>> = item.map(::toDisplayable)
+
+    fun add(item: T): Boolean = _source.add(toDisplayable(item))
+    fun remove(item: Displayable<T>): Boolean = _source.remove(item)
 
     companion object {
-        private fun decorate(s: String, from: Int, length: Int): TextFlow {
+        fun partialBold(s: String, from: Int, length: Int): TextFlow {
             val until = from + length
-
             return TextFlow(
                 Text(s.substring(0..<from)),
                 Text(s.substring(from..<until))
@@ -78,25 +99,8 @@ class SearchableListView<T>(
     }
 }
 
-interface ListViewEngine<T> {
-    val source: MutableList<Displayable<T>>
-
-    fun toLabel(item: T): String
-    fun toDisplayed(item: T): Displayable<T> = object : Displayable<T> {
-        override val label: String = toLabel(item)
-        override val item: T = item
-    }
-
-    fun toDisplayedList(item: Collection<T>): List<Displayable<T>> = item.map(::toDisplayed)
-
-    fun add(item: T): Boolean = source.add(toDisplayed(item))
-    fun remove(item: Displayable<T>): Boolean = source.remove(item)
-}
-
 inline fun <T> simpleEngine(origin: Collection<T>, crossinline toLabel: (T) -> String): ListViewEngine<T> =
-    object : ListViewEngine<T> {
-        override val source: MutableList<Displayable<T>> = toDisplayedList(origin).toMutableList()
-
+    object : ListViewEngine<T>(origin) {
         override fun toLabel(item: T): String = toLabel(item)
     }
 
