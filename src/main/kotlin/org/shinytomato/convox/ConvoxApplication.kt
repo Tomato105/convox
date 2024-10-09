@@ -25,7 +25,7 @@ object ConvoxAction {
         stage.hide()
         println("selected: $selected")
         LanguageInspectionController.loadFXML(stage) { _: Stage, _: Scene ->
-            initOrigin(selected)
+            initSource(selected)
         }
         stage.show()
     }

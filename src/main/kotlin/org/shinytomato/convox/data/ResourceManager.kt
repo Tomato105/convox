@@ -13,7 +13,7 @@ object ResourceManager {
     val dictDir = dataDir.resolve("dict")
     val stdDir = dataDir.resolve("std")
 
-    fun languageDirList(): List<File> =
+    fun languageDirs(): List<File> =
         INDEX_DAT.dataRooted().bufferedReader().use { br ->
             br.lineSequence()
                 .map(String::trim)

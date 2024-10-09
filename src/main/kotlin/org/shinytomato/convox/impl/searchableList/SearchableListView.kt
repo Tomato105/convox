@@ -55,7 +55,7 @@ class SearchableListView<T>(
 
     fun update(query: String) {
         listview.items.setAll(
-            engine.origin.filter { it.label.contains(query) }
+            engine.source.filter { it.label.contains(query) }
         )
     }
 
@@ -79,7 +79,7 @@ class SearchableListView<T>(
 }
 
 interface ListViewEngine<T> {
-    val origin: MutableList<Displayable<T>>
+    val source: MutableList<Displayable<T>>
 
     fun toLabel(item: T): String
     fun toDisplayed(item: T): Displayable<T> = object : Displayable<T> {
@@ -89,13 +89,13 @@ interface ListViewEngine<T> {
 
     fun toDisplayedList(item: Collection<T>): List<Displayable<T>> = item.map(::toDisplayed)
 
-    fun add(item: T): Boolean = origin.add(toDisplayed(item))
-    fun remove(item: Displayable<T>): Boolean = origin.remove(item)
+    fun add(item: T): Boolean = source.add(toDisplayed(item))
+    fun remove(item: Displayable<T>): Boolean = source.remove(item)
 }
 
 inline fun <T> simpleEngine(origin: Collection<T>, crossinline toLabel: (T) -> String): ListViewEngine<T> =
     object : ListViewEngine<T> {
-        override val origin: MutableList<Displayable<T>> = toDisplayedList(origin).toMutableList()
+        override val source: MutableList<Displayable<T>> = toDisplayedList(origin).toMutableList()
 
         override fun toLabel(item: T): String = toLabel(item)
     }

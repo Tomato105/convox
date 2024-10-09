@@ -21,7 +21,7 @@ open class SearchableListController<T>() : FXMLController() {
         searchableList = SearchableListView(listview, queryField)
     }
 
-    fun initOrigin(engine: ListViewEngine<T>) {
+    fun initSource(engine: ListViewEngine<T>) {
         searchableList.init(engine)
     }
 

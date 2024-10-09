@@ -37,11 +37,11 @@ class LanguageInspectionController : FXMLController() {
         }
     }
 
-    fun initOrigin(languageDir: File) {
+    fun initSource(languageDir: File) {
         this.languageName = languageDir.name
 
         wordListViewController.run {
-            initOrigin(simpleEngine(Language.fromDir(languageDir).words().keys, { it }))
+            initSource(simpleEngine(Language.fromDir(languageDir).words().keys, { it }))
 
             listview.prefHeightProperty().bind(Bindings.size(listview.items).multiply(LIST_CELL_SIZE).add(1 + LIST_PADDING * 2))
             listPadding(LIST_PADDING)
