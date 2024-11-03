@@ -7,13 +7,14 @@ import javafx.scene.control.TextField
 import javafx.scene.input.MouseEvent
 import org.shinytomato.convox.impl.FXMLController
 import org.shinytomato.convox.impl.IGetSelected
+import org.shinytomato.convox.impl.ISelector
 
-open class SearchableListController<T>() : FXMLController() {
+open class SearchableListController<T>() : FXMLController(), ISelector<T> {
 
     @FXML private lateinit var queryField: TextField
     @FXML lateinit var listview: ListView<Displayable<T>>
 
-    internal var getSelected: IGetSelected<T>? = null
+    override var getSelected: IGetSelected<T>? = null
     private lateinit var searchableList: SearchableListView<T>
 
     @FXML
@@ -21,8 +22,8 @@ open class SearchableListController<T>() : FXMLController() {
         searchableList = SearchableListView(listview, queryField)
     }
 
-    fun initSource(engine: ListViewEngine<T>) {
-        searchableList.init(engine)
+    fun initEngine(engine: ListViewEngine<T>) {
+        searchableList.initEngine(engine)
     }
 
     fun listPadding(padding: Double) {
@@ -30,7 +31,7 @@ open class SearchableListController<T>() : FXMLController() {
         listview.prefWidth = STAGE_WIDTH - (2 * (padding + 1.0))
     }
 
-    fun whenSelected(event: MouseEvent) {
+    override fun whenSelected(event: MouseEvent) {
         getSelected?.whenSelected(
             searchableList.getSelected().item,
             event

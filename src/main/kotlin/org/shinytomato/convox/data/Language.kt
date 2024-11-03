@@ -6,15 +6,14 @@ import java.io.RandomAccessFile
 import kotlin.collections.chunked
 
 
-fun String.splitAndTrim(delim: Char) = split(delim)
-    .run { if (first().isEmpty()) subList(1, this.size) else this }
+fun String.splitAndTrim(delim: Char) =
+    split(delim)
+        .run { if (first().isEmpty()) subList(1, this.size) else this }
 
 class Language(
     private val languageConfig: LanguageConfig,
-    private val words: HashMap<String, MutableList<Word>>,
+    val words: HashMap<String, MutableList<Word>>,
 ) {
-
-    fun words() = words.toMap()
 
     private val edited: HashSet<Word> = HashSet()
     private val removed: HashSet<Word> = HashSet()

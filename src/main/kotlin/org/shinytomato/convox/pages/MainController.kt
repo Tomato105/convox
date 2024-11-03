@@ -23,7 +23,7 @@ import java.io.File
 
 class MainController : FXMLController(), IGetSelected<File> {
 
-    @FXML lateinit var selected: Label
+    @FXML lateinit var fileName: Label
     @FXML lateinit var newButton: Button
     @FXML lateinit var openButton: Button
     @FXML lateinit var languageListView: Parent
@@ -33,12 +33,12 @@ class MainController : FXMLController(), IGetSelected<File> {
 
     @FXML
     private fun initialize() {
-        selected.textProperty().bind(Bindings.createStringBinding({
+        fileName.textProperty().bind(Bindings.createStringBinding({
             selectedItem.get()?.name ?: "언어를 선택하여 주십시오"
         }, selectedItem))
 
         languageListViewController.run {
-            initSource(simpleEngine(ResourceManager.languageDirs()) { it.name })
+            initEngine(simpleEngine(ResourceManager.languageDirs(), File::getName))
 
             val binding = Bindings.size(listview.items).multiply(LIST_CELL_SIZE).add(1 + LIST_PADDING * 2)
             listview.prefHeightProperty().bind(binding)
