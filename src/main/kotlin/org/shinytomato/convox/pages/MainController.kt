@@ -17,8 +17,8 @@ import org.shinytomato.convox.data.ResourceManager
 import org.shinytomato.convox.impl.FXMLController
 import org.shinytomato.convox.impl.IGetSelected
 import org.shinytomato.convox.impl.Loadable
+import org.shinytomato.convox.impl.searchableList.ListViewEngine.Companion.simpleEngine
 import org.shinytomato.convox.impl.searchableList.SearchableListController
-import org.shinytomato.convox.impl.searchableList.simpleEngine
 import java.io.File
 
 class MainController : FXMLController(), IGetSelected<File> {

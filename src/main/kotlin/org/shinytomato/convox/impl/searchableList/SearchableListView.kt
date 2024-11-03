@@ -6,17 +6,13 @@ import javafx.scene.control.ListView
 import javafx.scene.control.TextField
 import javafx.util.Callback
 
-interface Displayable<T> {
-    val display: String
-    val item: T
-}
-
 class SearchableListView<T>(
     private val listview: ListView<Displayable<T>>,
     private val queryField: TextField,
 ) {
     private lateinit var listener: ChangeListener<String>
     private lateinit var engine: ListViewEngine<T>
+    private val lowercaseQuery = queryField.textProperty().map(String::lowercase)
 
     init {
         listview.cellFactory = Callback {
@@ -25,7 +21,7 @@ class SearchableListView<T>(
                     super.updateItem(item, empty)
                     graphic =
                         if (empty || item == null) null
-                        else engine.toGraphic(item, queryField.text)
+                        else engine.toGraphic(item, lowercaseQuery.value)
                 }
             }
         }
@@ -47,7 +43,7 @@ class SearchableListView<T>(
 
     fun update(query: String) {
         listview.items.setAll(
-            engine.source.filter { it.display.contains(query) }
+            engine.source.filter { it: Displayable<T> -> it.display.contains(query, true) }
         )
     }
 

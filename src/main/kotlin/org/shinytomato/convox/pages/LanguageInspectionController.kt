@@ -19,8 +19,8 @@ import org.shinytomato.convox.impl.FXMLController
 import org.shinytomato.convox.impl.IGetSelected
 import org.shinytomato.convox.impl.IGetSelected.Companion.setSelector
 import org.shinytomato.convox.impl.Loadable
+import org.shinytomato.convox.impl.searchableList.ListViewEngine.Companion.simpleEngine
 import org.shinytomato.convox.impl.searchableList.SearchableListController
-import org.shinytomato.convox.impl.searchableList.simpleEngine
 import java.io.File
 
 class LanguageInspectionController : FXMLController(), IGetSelected<Word> {
