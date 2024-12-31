@@ -17,7 +17,6 @@ class LanguageConfig(
     val tags: OrderingMap<Keyword>,
 ) {
 
-    fun getDir(): File = name.dictRooted()
     fun resolve(loc: String): File = name.dictRooted().resolve(loc)
     fun resolvePage(i: Int): File = resolve(WORD_DIR_NAME).resolve("${i.toString(16)}$WORD_PAGE_EXTENSION")
 
@@ -30,32 +29,35 @@ class LanguageConfig(
             .mapValues { (_, v) -> v.toMutableList() }
             .toHashMap()
 
+    override fun toString() = "LanguageConfig(name=$name, classes=$classes, tags=$tags"
+
     companion object {
         private const val CLASSES_FILE_NAME = "classes"
         private const val TAGS_FILE_NAME = "tags"
         const val WORD_DIR_NAME = "wrd"
 
-        private fun attributesFromDir(langDir: File, x: String): OrderingMap<Keyword> {
-            val file = langDir.resolve(x)
-                .run { if (isFile) this else x.stdRooted() }
+        private fun linesToAttributes(langDir: File, fileName: String): OrderingMap<Keyword> {
+            val file = langDir.resolve(fileName)
+                .run { if (isFile) this else fileName.stdRooted() }
 
             return OrderingMap(file.bufferedReader()
                 .use { br ->
                     br.lineSequence()
-                        .map(String::trim)
-                        .associate { s ->
+                        .mapNotNull { s ->
+                            val s = s.trim()
                             val i = s.indexOf(':')
-                            (s.substring(0..<i).toInt(16)) to Keyword(s.substring(i..<s.length))
+                            ((s.substring(0..<i).toIntOrNull(16)) ?: return@mapNotNull null) to Keyword(s.substring((i+1)..<s.length))
                         }
+                        .toMap()
                         .toHashMap()
                 })
         }
 
         private fun classesFromDir(langDir: File): OrderingMap<Keyword> =
-            attributesFromDir(langDir, CLASSES_FILE_NAME)
+            linesToAttributes(langDir, CLASSES_FILE_NAME)
 
         private fun tagsFromDir(langDir: File): OrderingMap<Keyword> =
-            attributesFromDir(langDir, TAGS_FILE_NAME)
+            linesToAttributes(langDir, TAGS_FILE_NAME)
 
         fun fromDir(langDir: File): LanguageConfig {
             return LanguageConfig(langDir.name, classesFromDir(langDir), tagsFromDir(langDir))

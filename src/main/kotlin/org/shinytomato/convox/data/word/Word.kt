@@ -11,12 +11,12 @@ import java.io.File
 class Word(
     val id: Int,
     val name: String,
+    val pronunciation: String?,
     private val tags: HashSet<Keyword>,
     private val attrs: HashMap<RelativeAttr, MutableList<WordRef>>,
     private val meanings: HashMap<Keyword, MutableList<Meaning>>,
     val page: Int,
     val loc: Int,
-//    val size: Int,
 ) {
 
     private fun idHexDec(): String = id.toString(16)
@@ -61,10 +61,14 @@ class Word(
 
     @JvmName("CollectionStringValueJoined")
     private fun Collection<String>.valuesJoined(): String = joinToString("$ASSIGN")
+
+    @JvmName("CollectionAnyValueJoined")
+    private fun Collection<Any>.valuesJoined(): String = joinToString(transform = Any::toString)
+
     private inline fun <T, F> writeQueries(
         x: Map<T, Collection<F>>,
         kMapper: (T) -> Any?,
-        vMapper: (F) -> String?,
+        vMapper: (F) -> Any?,
     ): String =
         x.map { (k, v) ->
             "$QUERY${kMapper(k)!!}" +
@@ -82,25 +86,29 @@ class Word(
 
     companion object {
 
-        const val HEADER = '\u0001'
-        const val DIVIDER = '\u0004'
-        const val QUERY = '\u0005'
-        const val ASSIGN = '\u0006'
-        const val DESCRIBE = '\u0007'
+        const val HEADER = '\u0001' // SOH
+        const val DIVIDER = '\u0004' // EOT
+        const val QUERY = '\u0005' // ENQ
+        const val ASSIGN = '\u0006' // ACK
+        const val DESCRIBE = '\u0007' // BEL
 
         private fun fromString(
             string: String,
             languageConfig: LanguageConfig,
             page: Int,
             loc: Int,
-            size: Int,
             wordMap: HashMap<Int, Word>,
         ): Word {
+
             val split = string.split(DIVIDER)
 
             val header = split[0].split(ASSIGN)
             val id = header[0].toInt(16)
-            val name = header[1]
+
+            val main = header[1].split(DESCRIBE)
+            val name = main[0]
+            val pronunciation = main.getOrNull(1)
+
             val tags = header.subList(2, header.size)
                 .map { languageConfig.tags[it.toInt(16)]!! }
                 .toHashSet()
@@ -113,11 +121,11 @@ class Word(
 
             val meanings = readQueries(
                 split[2],
-                { languageConfig.classes[it.toInt(16)] },
-                Meaning.Companion::fromString
+                { languageConfig.classes[id.toInt()] },
+                Meaning.Companion::fromString,
             ).toHashMap()
 
-            return Word(id, name, tags, attrs, meanings, page, loc, /*size*/)
+            return Word(id, name, pronunciation ,tags, attrs, meanings, page, loc)
                 .also { wordMap[id] = it }
         }
 
@@ -129,9 +137,17 @@ class Word(
         ): List<Word> {
             var caret = 0
             return file.bufferedReader().use { br ->
-                br.readText().splitAndTrim(HEADER).map { s ->
+                br.readText().splitAndTrim(HEADER).mapNotNull { s ->
                     val len = s.length
-                    val word = fromString(s, languageConfig, page, caret, len, wordMap)
+
+                    // 숫자 파싱에서 오류나면 그냥 버리기
+                    val word = try {
+                        fromString(s, languageConfig, page, len, wordMap)
+                    } catch (ex: NumberFormatException) {
+                        ex.printStackTrace()
+                        null
+                    }
+
                     caret += len
                     word
                 }
@@ -150,6 +166,7 @@ class Word(
             return words ?: listOf()
         }
 
+        // kMapper 결과가 null이면 value에 예외가 있어도 그 전에 넘겨서 예외가 안생기는 경우 有
         private inline fun <T, F> readQueries(
             x: String,
             kMapper: (String) -> T?, // 빼고 싶을 때 null 반환

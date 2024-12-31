@@ -1,4 +1,4 @@
-package org.shinytomato.convox.impl.searchableList
+package org.shinytomato.convox.pages.searchableList
 
 import javafx.scene.Node
 import javafx.scene.text.Text
@@ -9,7 +9,7 @@ abstract class ListViewEngine<T>(source: Collection<T>) {
     internal val source = toDisplayableList(source).toMutableList()
 
     // String 값을 산출하는 함수
-    abstract fun toLabel(item: T): String
+    abstract fun toDisplay(item: T): String
 
     // 화면에 표시되는 Node
     open fun toGraphic(item: Displayable<T>, lowercaseQuery: String): Node =
@@ -18,8 +18,7 @@ abstract class ListViewEngine<T>(source: Collection<T>) {
 
     // 항목을 추가할 때 필요
     private fun toDisplayable(item: T): Displayable<T> = object : Displayable<T> {
-        override val display: String
-            get() = toLabel(item)
+        override val display: String = toDisplay(item)
         override val item: T = item
     }
     private fun toDisplayableList(item: Collection<T>): List<Displayable<T>> = item.map(::toDisplayable)
@@ -40,7 +39,7 @@ abstract class ListViewEngine<T>(source: Collection<T>) {
 
         inline fun <T> simpleEngine(origin: Collection<T>, crossinline toDisplay: (T) -> String): ListViewEngine<T> =
             object : ListViewEngine<T>(origin) {
-                override fun toLabel(item: T): String = toDisplay(item)
+                override fun toDisplay(item: T): String = toDisplay(item)
             }
     }
 }

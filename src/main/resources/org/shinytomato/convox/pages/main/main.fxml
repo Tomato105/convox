@@ -6,26 +6,24 @@
 
 <HBox stylesheets="@../root.css, @main.css"
       xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.shinytomato.convox.pages.MainController"
-      prefHeight="364.0" prefWidth="500.0" spacing="10.0">
+      fx:controller="org.shinytomato.convox.pages.MainController">
 
     <fx:include fx:id="languageListView" source="../searchableList/searchableList.fxml"/>
 
-    <VBox alignment="BASELINE_CENTER" maxHeight="340.0" prefWidth="200.0">
-        <Label id="selected" fx:id="fileName">
+    <VBox alignment="TOP_CENTER" maxHeight="340.0" HBox.hgrow="ALWAYS">
+        <Label id="selected" fx:id="selectedLanguage" text="언어를 선택해 주십시오">
             <VBox.margin>
-                <Insets bottom="20.0" top="20.0"/>
+                <Insets top="60.0"/>
             </VBox.margin>
         </Label>
 
         <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
             <HBox alignment="CENTER" spacing="25.0">
-                <Button fx:id="newButton" mnemonicParsing="false" onMousePressed="#newButton" text="새로 만들기"/>
-                <Button fx:id="openButton" disable="true" mnemonicParsing="false" onMousePressed="#openButton"
+                <Button mnemonicParsing="false" onMousePressed="#newButton" text="새로 만들기"/>
+                <Button fx:id="openButton" disable="true" mnemonicParsing="false" onMousePressed="#openSelected"
                         text="열기"/>
             </HBox>
-            <Label id="info" disable="true" maxHeight="40.0" maxWidth="200.0" minHeight="40.0" prefHeight="40.0"
-                   text="ⓘ 언어 이름을 더블클릭하거나&#10;ENTER 키를 눌러 열 수도 있습니다.">
+            <Label id="info" disable="true" text="ⓘ 언어 이름을 더블클릭하거나&#10;ENTER 키를 눌러 열 수도 있습니다.">
                 <padding>
                     <Insets left="20.0"/>
                 </padding>

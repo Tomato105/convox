@@ -5,3 +5,7 @@
 .button:hover {
     -fx-background-color: #e0e0e0;
 }
+
+.label {
+    -fx-font-size: 20;
+}

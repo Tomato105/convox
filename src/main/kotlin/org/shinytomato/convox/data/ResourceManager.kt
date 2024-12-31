@@ -1,7 +1,6 @@
 package org.shinytomato.convox.data
 
 import java.io.File
-import java.net.URL
 
 object ResourceManager {
     const val DATA_ROOT = "data/"
@@ -29,7 +28,4 @@ object ResourceManager {
     fun String.dictRootedString(): String = "$DICT_ROOT/$this"
     fun String.stdRooted(): File = stdDir.resolve(this)
     fun String.stdRootedString(): String = "$STD_ROOT/$this"
-
-    fun Any.resolveResource(string: String): URL? = this.javaClass.getResource(string)
-    fun Any.resolveResourcePath(string: String): String? = this.resolveResource(string)?.toString()
 }

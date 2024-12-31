@@ -14,11 +14,13 @@ sealed class WordRef {
         override fun validateRef(wordMap: HashMap<Int, Word>): InstanceRef? {
             return InstanceRef(wordMap[id] ?: return null)
         }
+        override fun toString() = "IdRef(id=$id)"
     }
 
     class InstanceRef(word: Word) : WordRef() {
         override val id: Int = word.id
         override val inner: Word = word
         override fun validateRef(wordMap: HashMap<Int, Word>): InstanceRef = this
+        override fun toString() = "InstanceRef(id=$id)"
     }
 }

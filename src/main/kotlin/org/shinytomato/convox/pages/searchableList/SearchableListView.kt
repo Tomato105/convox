@@ -1,4 +1,4 @@
-package org.shinytomato.convox.impl.searchableList
+package org.shinytomato.convox.pages.searchableList
 
 import javafx.beans.value.ChangeListener
 import javafx.scene.control.ListCell
@@ -27,7 +27,7 @@ class SearchableListView<T>(
         }
     }
 
-    fun getSelected(): Displayable<T> = listview.selectionModel.selectedItem
+    fun selectedItem(): Displayable<T>? = listview.selectionModel.selectedItem
 
     fun initEngine(engine: ListViewEngine<T>) {
         this.engine = engine

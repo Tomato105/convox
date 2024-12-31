@@ -10,6 +10,10 @@ fun String.splitAndTrim(delim: Char) =
     split(delim)
         .run { if (first().isEmpty()) subList(1, this.size) else this }
 
+// 어차피 파일 크기 작으니까 굳이 복잡하게 중간 수정 하지 말고 파일 전체 수정
+// -> 이걸 위해서 단어들을 Page로 묶어서 저장?
+// -> edited, removed 불필요해질듯?
+// 일단 1.작성중이던내용(갑자기 꺼짐 대비) & 2.변경내용(나중에 한번에적용)-다른파일에써놓기
 class Language(
     private val languageConfig: LanguageConfig,
     val words: HashMap<String, MutableList<Word>>,
@@ -18,15 +22,14 @@ class Language(
     private val edited: HashSet<Word> = HashSet()
     private val removed: HashSet<Word> = HashSet()
 
-    override fun toString(): String {
-        val sb = StringBuilder("Language(\n\tconfig=")
-        sb.appendLine("\twords=[")
-        for ((word, meanings) in words) {
-            sb.appendLine("\t\t$word:$meanings")
-            sb.appendLine()
-        }
-        return sb.toString()
-    }
+    val name
+        get() = languageConfig.name
+
+    override fun toString(): String = """
+        Language(
+            config=$languageConfig,
+            words=${words.map { (k, v) -> "$k[${v.joinToString(",") { it.id.toString() }}]" }}
+        )""".trimIndent()
 
     fun save(languageConfig: LanguageConfig) {
         val words = words.values.flatten()
